@@ -1,0 +1,2610 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>세계사 & 지성사 아카이브 — 역사가 낳은 위대한 책들</title>
+    <!-- Tailwind CSS 로드 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Noto Serif KR (고전적 아카이브 감성) & Inter / Pretendard -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'Inter', 'sans-serif'],
+                        serif: ['"Noto Serif KR"', 'Georgia', 'serif'],
+                    },
+                    colors: {
+                        archive: {
+                            paper: '#FAF8F5',
+                            card: '#FFFFFF',
+                            ink: '#1E242B',
+                            muted: '#5C6672',
+                            gold: '#B4833E',
+                            goldLight: '#F4ECE1',
+                            navy: '#1B2A4A',
+                            border: '#E5DFD5'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 커스텀 스크롤바 및 미세 스타일 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.4);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.65);
+        }
+        .serif-title {
+            font-family: 'Noto Serif KR', Georgia, serif;
+        }
+        /* 타임라인 연결선 */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 1.15rem;
+            width: 2px;
+            background: linear-gradient(to bottom, #D6CEC2 0%, #B4833E 50%, #D6CEC2 100%);
+            opacity: 0.5;
+        }
+        .dark .timeline-line::before {
+            background: linear-gradient(to bottom, #334155 0%, #D97706 50%, #334155 100%);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-archive-paper text-archive-ink dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
+
+    <!-- 상단 헤더 바 -->
+    <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-archive-border dark:border-slate-800 shadow-sm">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+            <!-- 브랜드 로고 -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-archive-navy dark:bg-amber-600 text-white flex items-center justify-center shadow-md shrink-0">
+                    <i data-lucide="book-open-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="serif-title text-lg sm:text-xl font-bold tracking-tight text-archive-navy dark:text-amber-400">
+                            세계사 & 지성사 아카이브
+                        </h1>
+                        <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-archive-goldLight text-archive-gold dark:bg-amber-950/60 dark:text-amber-300 border border-archive-gold/20">
+                            Chronicle & Canon
+                        </span>
+                    </div>
+                    <p class="text-xs text-archive-muted dark:text-slate-400 hidden sm:block">
+                        역사적 격변이 낳은 불멸의 고전과 사상가들의 연대기
+                    </p>
+                </div>
+            </div>
+
+            <!-- 중앙 뷰 전환 탭 -->
+            <div class="flex items-center bg-stone-100 dark:bg-slate-800 p-1 rounded-xl border border-archive-border dark:border-slate-700">
+                <button id="tab-events" onclick="switchView('events')" class="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-slate-700 text-archive-navy dark:text-amber-300 shadow-sm">
+                    <i data-lucide="landmark" class="w-4 h-4"></i>
+                    <span>사건 → 저서 탐색</span>
+                    <span id="badge-event-count" class="ml-1 px-1.5 py-0.2 text-[11px] rounded-full bg-archive-goldLight dark:bg-slate-600 text-archive-gold dark:text-amber-300">0</span>
+                </button>
+                <button id="tab-books" onclick="switchView('books')" class="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-archive-muted dark:text-slate-400 hover:text-archive-ink dark:hover:text-white">
+                    <i data-lucide="library" class="w-4 h-4"></i>
+                    <span>고전/저자 도서관</span>
+                    <span id="badge-book-count" class="ml-1 px-1.5 py-0.2 text-[11px] rounded-full bg-stone-200 dark:bg-slate-700 text-stone-600 dark:text-slate-300">0</span>
+                </button>
+            </div>
+
+            <!-- 우측 유틸리티 버튼 -->
+            <div class="flex items-center gap-2">
+                <button onclick="openAddModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-archive-navy hover:bg-slate-800 dark:bg-amber-600 dark:hover:bg-amber-500 text-white text-xs sm:text-sm font-medium transition-all shadow-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">사건·저서 추가</span>
+                    <span class="sm:hidden">추가</span>
+                </button>
+                <button onclick="toggleDarkMode()" title="다크/라이트 모드 전환" class="p-2 rounded-xl border border-archive-border dark:border-slate-700 bg-white dark:bg-slate-800 text-archive-muted dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700 transition-colors">
+                    <i id="theme-icon" data-lucide="moon" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 검색 및 필터 컨트롤 바 -->
+        <div class="bg-stone-50/80 dark:bg-slate-900/60 border-t border-archive-border/70 dark:border-slate-800/80">
+            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 py-2.5 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5">
+                <!-- 검색 입력창 -->
+                <div class="relative flex-1 max-w-xl">
+                    <i data-lucide="search" class="w-4 h-4 text-archive-muted dark:text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="사건명, 연도(예: 1789), 책 제목, 저자명, 키워드 검색..." 
+                        class="w-full pl-10 pr-9 py-2 rounded-xl bg-white dark:bg-slate-800 border border-archive-border dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-archive-gold dark:focus:ring-amber-500 transition-all placeholder:text-stone-400">
+                    <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-slate-200">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- 시대 필터 칩 & 분야 필터 -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <div id="era-filters" class="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
+                        <button onclick="setEraFilter('ALL')" data-era="ALL" class="era-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-archive-gold text-white shadow-sm transition-all whitespace-nowrap">전체 시대</button>
+                        <button onclick="setEraFilter('고대')" data-era="고대" class="era-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-archive-muted dark:text-slate-300 border border-archive-border dark:border-slate-700 hover:border-archive-gold transition-all whitespace-nowrap">고대 (~476)</button>
+                        <button onclick="setEraFilter('중세')" data-era="중세" class="era-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-archive-muted dark:text-slate-300 border border-archive-border dark:border-slate-700 hover:border-archive-gold transition-all whitespace-nowrap">중세 (477~1491)</button>
+                        <button onclick="setEraFilter('근대 여명')" data-era="근대 여명" class="era-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-archive-muted dark:text-slate-300 border border-archive-border dark:border-slate-700 hover:border-archive-gold transition-all whitespace-nowrap">근대 여명 (1492~1788)</button>
+                        <button onclick="setEraFilter('혁명과 제국주의')" data-era="혁명과 제국주의" class="era-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-archive-muted dark:text-slate-300 border border-archive-border dark:border-slate-700 hover:border-archive-gold transition-all whitespace-nowrap">혁명·제국주의 (1789~1913)</button>
+                        <button onclick="setEraFilter('현대')" data-era="현대" class="era-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-archive-muted dark:text-slate-300 border border-archive-border dark:border-slate-700 hover:border-archive-gold transition-all whitespace-nowrap">현대 (1914~현재)</button>
+                    </div>
+
+                    <select id="field-filter" onchange="handleFieldFilter()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-archive-ink dark:text-slate-200 border border-archive-border dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-archive-gold">
+                        <option value="ALL">모든 학문 분야</option>
+                        <option value="철학">철학·윤리학</option>
+                        <option value="정치·사회">정치·사회·법학</option>
+                        <option value="역사·인류">역사·인류·지리</option>
+                        <option value="과학·의학">과학·수학·의학</option>
+                        <option value="경제학">경제학</option>
+                        <option value="문학·비평">문학·문화비평</option>
+                        <option value="심리·언어">심리·언어·종교</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-5">
+        
+        <!-- 뷰 1: 세계사 사건 -> 연관 저서 마스터-디테일 뷰 -->
+        <div id="view-events" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- 좌측 컬럼: 세계사 주요 사건 타임라인 리스트 (5칸) -->
+            <section class="lg:col-span-5 bg-white dark:bg-slate-900 rounded-2xl border border-archive-border dark:border-slate-800 shadow-sm overflow-hidden flex flex-col lg:h-[calc(100vh-165px)] lg:sticky lg:top-[145px]">
+                <div class="px-4 py-3 bg-stone-50 dark:bg-slate-800/70 border-b border-archive-border dark:border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="scroll-text" class="w-4 h-4 text-archive-gold dark:text-amber-400"></i>
+                        <h2 class="text-sm font-bold text-archive-navy dark:text-slate-100">세계사 주요 사건 연표</h2>
+                    </div>
+                    <span id="filtered-event-status" class="text-xs text-archive-muted dark:text-slate-400 font-medium">총 0건</span>
+                </div>
+
+                <!-- 사건 리스트 컨테이너 -->
+                <div id="event-list-container" class="flex-1 overflow-y-auto p-3 space-y-2 relative timeline-line">
+                    <!-- JS로 동적 렌더링 -->
+                </div>
+            </section>
+
+            <!-- 우측 컬럼: 선택된 사건 상세 및 연관 저서 패널 (7칸) -->
+            <section id="desktop-detail-panel" class="hidden lg:block lg:col-span-7 bg-white dark:bg-slate-900 rounded-2xl border border-archive-border dark:border-slate-800 shadow-sm overflow-hidden min-h-[calc(100vh-165px)]">
+                <div id="detail-content-desktop" class="p-6 sm:p-8">
+                    <!-- JS로 동적 렌더링 -->
+                </div>
+            </section>
+        </div>
+
+        <!-- 뷰 2: 고전/저자 도서관 역방향 탐색 뷰 -->
+        <div id="view-books" class="hidden animate-fade-in">
+            <div class="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-archive-border dark:border-slate-800 shadow-sm">
+                <div>
+                    <h2 class="serif-title text-lg font-bold text-archive-navy dark:text-amber-400 flex items-center gap-2">
+                        <i data-lucide="book-marked" class="w-5 h-5 text-archive-gold"></i>
+                        인류 지성사 고전 & 저자 도서관
+                    </h2>
+                    <p class="text-xs sm:text-sm text-archive-muted dark:text-slate-400 mt-0.5">
+                        각 고전과 저자를 클릭하면, 이 책이 탄생하는 데 결정적 배경이 된 역사적 사건으로 바로 이동하여 맥락을 확인할 수 있습니다.
+                    </p>
+                </div>
+                <div class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-archive-goldLight dark:bg-amber-950/50 text-archive-gold dark:text-amber-300 self-start sm:self-center">
+                    검색된 명저: <span id="filtered-book-status">0</span>권
+                </div>
+            </div>
+
+            <div id="books-grid-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <!-- JS로 동적 렌더링 -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 모바일 전용 상세 보기 드로어/모달 -->
+    <div id="mobile-detail-modal" class="fixed inset-0 z-50 hidden lg:hidden bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl max-h-[90vh] rounded-t-3xl sm:rounded-2xl border border-archive-border dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden animate-fade-in">
+            <div class="px-5 py-3.5 bg-stone-50 dark:bg-slate-800 border-b border-archive-border dark:border-slate-700 flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-archive-gold dark:text-amber-400">사건 & 연관 고전 상세 분석</span>
+                <button onclick="closeMobileModal()" class="p-1.5 rounded-lg bg-stone-200/70 dark:bg-slate-700 text-stone-600 dark:text-slate-300 hover:bg-stone-300">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="detail-content-mobile" class="p-5 overflow-y-auto flex-1">
+                <!-- JS로 동적 렌더링 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 사용자 정의 사건/연관 저서 추가 모달 -->
+    <div id="add-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-xl max-h-[90vh] rounded-2xl border border-archive-border dark:border-slate-700 shadow-2xl flex flex-col overflow-hidden animate-fade-in">
+            <div class="px-6 py-4 bg-archive-navy dark:bg-slate-800 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="feather" class="w-5 h-5 text-amber-400"></i>
+                    <h3 class="serif-title text-base font-bold">새로운 역사적 사건 및 연관 저서 등록</h3>
+                </div>
+                <button onclick="closeAddModal()" class="p-1 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <form id="add-entry-form" onsubmit="handleAddSubmit(event)" class="p-6 overflow-y-auto space-y-4 text-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">시대 구분 *</label>
+                        <select id="new-era" required class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                            <option value="고대">고대 (~476년)</option>
+                            <option value="중세">중세 (477~1491년)</option>
+                            <option value="근대 여명">근대 여명 (1492~1788년)</option>
+                            <option value="혁명과 제국주의">혁명과 제국주의 (1789~1913년)</option>
+                            <option value="현대" selected>현대 (1914년~현재)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">발생 연도 *</label>
+                        <input type="text" id="new-year" required placeholder="예: 1968년 또는 기원전 44년" class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">역사적 사건명 *</label>
+                    <input type="text" id="new-event-title" required placeholder="예: 프랑스 68혁명" class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">사건 개요 및 역사적 의의 *</label>
+                    <textarea id="new-event-desc" required rows="2" placeholder="사건의 배경과 인류사에 미친 영향을 간략히 입력하세요." class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800"></textarea>
+                </div>
+
+                <hr class="border-archive-border dark:border-slate-800">
+                <p class="text-xs font-bold text-archive-gold dark:text-amber-400 uppercase tracking-wider">이 사건의 영향을 받은 대표 저서 정보</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">책 제목 *</label>
+                        <input type="text" id="new-book-title" required placeholder="예: 감시와 처벌" class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">학문 분야 *</label>
+                        <select id="new-book-field" required class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                            <option value="철학">철학</option>
+                            <option value="정치·사회">정치·사회</option>
+                            <option value="역사·인류">역사·인류</option>
+                            <option value="과학·의학">과학·의학</option>
+                            <option value="경제학">경제학</option>
+                            <option value="문학·비평">문학·비평</option>
+                            <option value="심리·언어">심리·언어</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">저자 이름 *</label>
+                        <input type="text" id="new-author-name" required placeholder="예: 미셸 푸코" class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">출생연도 *</label>
+                        <input type="text" id="new-author-birth" required placeholder="예: 1926년" class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">사망연도 *</label>
+                        <input type="text" id="new-author-death" required placeholder="예: 1984년 또는 생존" class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-archive-muted dark:text-slate-400 mb-1">사건과의 연관성 및 책의 주요 내용 *</label>
+                    <textarea id="new-book-summary" required rows="3" placeholder="이 책이 해당 사건으로부터 어떤 영향을 받았으며, 어떤 핵심 내용을 담고 있는지 작성해주세요." class="w-full px-3 py-2 rounded-xl border border-archive-border dark:border-slate-700 bg-stone-50 dark:bg-slate-800"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-xl border border-archive-border dark:border-slate-700 text-archive-muted dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-800 font-medium">취소</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-archive-navy dark:bg-amber-600 text-white font-semibold hover:opacity-95 shadow-sm">아카이브에 저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 알림 토스트 메시지 -->
+    <div id="toast-box" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300 translate-y-2 opacity-0">
+        <div class="bg-archive-navy dark:bg-amber-600 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-sm font-medium">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-300 dark:text-white"></i>
+            <span id="toast-message">저장되었습니다.</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // 세계사 주요 사건 & 지성사 명저 방대한 데이터베이스 (고대 ~ 현대 110+ 핵심 사건)
+        // 각 사건에는 사건 이후 영향을 받아 집필되거나 사상적 전환을 이룬 저서, 저자 생몰연도, 분야, 상세 분석 포함
+        // ============================================================================
+        const INITIAL_HISTORY_DATA = [
+            // ---------------- 1. 고대 ----------------
+            {
+                id: "evt-001",
+                year: "기원전 10000년경",
+                era: "고대",
+                title: "농업 혁명 (신석기 혁명)",
+                significance: "인류가 수렵·채집 생활에서 벗어나 정착 농경과 목축을 시작하면서 잉여 생산물, 사유재산, 계급, 도시와 국가의 기틀이 형성된 인류사 최대의 전환점입니다.",
+                books: [
+                    {
+                        title: "인간 불평등 기원론",
+                        pubYear: "1755년",
+                        author: "장자크 루소",
+                        birth: "1712년",
+                        death: "1778년",
+                        field: "철학",
+                        summary: "농업과 야금술의 발명이 토지 사유화와 빈부 격차, 지배와 예속이라는 사회적 불평등을 탄생시켰다고 분석한 근대 사회철학의 고전입니다."
+                    },
+                    {
+                        title: "총, 균, 쇠",
+                        pubYear: "1997년",
+                        author: "재레드 다이아몬드",
+                        birth: "1937년",
+                        death: "생존",
+                        field: "역사·인류",
+                        summary: "비옥한 초승달 지대에서 시작된 농업 혁명의 시기와 작물·가축화 조건의 차이가 대륙별 문명 발전 속도와 현대 세계의 불균형을 결정지었음을 규명했습니다."
+                    },
+                    {
+                        title: "사피엔스",
+                        pubYear: "2011년",
+                        author: "유발 하라리",
+                        birth: "1976년",
+                        death: "생존",
+                        field: "역사·인류",
+                        summary: "농업 혁명을 '역사상 최대의 사기'로 재해석하며, 밀이 인간을 길들임으로써 인구 폭발과 동시에 노동 시간 증가 및 계층 고착화가 일어났음을 통찰합니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-002",
+                year: "기원전 3500년경",
+                era: "고대",
+                title: "메소포타미아 문명 형성과 쐐기문자 발명",
+                significance: "티그리스·유프라테스강 유역에서 수메르인들이 인류 최초의 도시국가와 문자(설형문자)를 발명하여 신화와 기록의 역사를 열었습니다.",
+                books: [
+                    {
+                        title: "길가메시 서사시",
+                        pubYear: "기원전 2100년경",
+                        author: "신레케운니니 (편찬)",
+                        birth: "기원전 13세기경",
+                        death: "미상",
+                        field: "문학·비평",
+                        summary: "메소포타미아의 도시국가 우루크의 왕 길가메시를 주인공으로 한 인류 최초의 문학 작품으로, 인간의 유한성과 죽음에 대한 두려움, 우정과 지혜의 탐구를 담았습니다."
+                    },
+                    {
+                        title: "역사는 수메르에서 시작되었다",
+                        pubYear: "1956년",
+                        author: "새뮤얼 노아 크레이머",
+                        birth: "1897년",
+                        death: "1990년",
+                        field: "역사·인류",
+                        summary: "수메르 점토판 해독을 통해 최초의 학교, 의회, 법전, 세금 감면 등 인류 문명 제도의 원형이 메소포타미아에서 탄생했음을 입증한 고대사 명저입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-003",
+                year: "기원전 1750년경",
+                era: "고대",
+                title: "함무라비 법전 편찬",
+                significance: "고바빌로니아의 함무라비 왕이 제국 전역의 법률을 통일하여 돌기둥에 새긴 성문법으로, '눈에는 눈, 이에는 이'로 대표되는 법치와 응보적 정의의 원형을 세웠습니다.",
+                books: [
+                    {
+                        title: "법의 정신",
+                        pubYear: "1748년",
+                        author: "몽테스키외",
+                        birth: "1689년",
+                        death: "1755년",
+                        field: "정치·사회",
+                        summary: "함무라비 법전을 비롯한 고대부터 근대까지의 법률 체계를 비교 분석하여 법이 각 사회의 기후, 풍토, 정체와 맺는 필연적 관계를 규명하고 삼권분립을 제시했습니다."
+                    },
+                    {
+                        title: "고대법",
+                        pubYear: "1861년",
+                        author: "헨리 메인",
+                        birth: "1822년",
+                        death: "1888년",
+                        field: "정치·사회",
+                        summary: "함무라비 법전과 로마법 등 고대 성문법의 진화 과정을 추적하여 인류 사회가 '신분에서 계약으로' 발전해 왔다는 법사회학의 핵심 명제를 정립했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-004",
+                year: "기원전 776년",
+                era: "고대",
+                title: "그리스 폴리스 성립과 제1회 고대 올림픽",
+                significance: "지중해 세계에 독립된 도시국가(폴리스) 문화가 만개하고, 올림피아 제전을 통해 그리스인들의 범헬레니즘 연대감과 신체·지성 조화 사상이 확립되었습니다.",
+                books: [
+                    {
+                        title: "일리아스 & 오디세이아",
+                        pubYear: "기원전 8세기경",
+                        author: "호메로스",
+                        birth: "기원전 8세기경",
+                        death: "기원전 8세기경",
+                        field: "문학·비평",
+                        summary: "그리스 폴리스 시민들의 공통된 가치관인 명예(아레테)와 영웅적 투쟁, 운명에 맞서는 인간의 위엄을 노래하여 서양 문학의 원류가 되었습니다."
+                    },
+                    {
+                        title: "호모 루덴스",
+                        pubYear: "1938년",
+                        author: "요한 하위징아",
+                        birth: "1872년",
+                        death: "1945년",
+                        field: "역사·인류",
+                        summary: "고대 그리스의 올림피아 경기와 비극 경연 등 '경쟁적 놀이(아곤)'가 법, 철학, 예술, 문명 전체를 낳은 근원적 원동력임을 통찰한 문화사 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-005",
+                year: "기원전 551년",
+                era: "고대",
+                title: "춘추전국시대의 혼란과 제자백가 출현",
+                significance: "주나라 왕실의 권위가 붕괴하고 약육강식의 전란이 이어지자, 혼란을 극복할 통치 원리와 인간 본성을 탐구하는 유가·도가·묵가·법가 등 사상의 황금기가 열렸습니다.",
+                books: [
+                    {
+                        title: "논어",
+                        pubYear: "기원전 5세기경",
+                        author: "공자 (제자들 편찬)",
+                        birth: "기원전 551년",
+                        death: "기원전 479년",
+                        field: "철학",
+                        summary: "춘추시대의 도덕적 붕괴를 극복하기 위해 인(仁)과 예(禮)에 기반한 인간다움의 회복과 군자의 수양, 덕치를 설파한 동아시아 인문학의 근본 경전입니다."
+                    },
+                    {
+                        title: "도덕경",
+                        pubYear: "기원전 5세기경",
+                        author: "노자",
+                        birth: "기원전 604년경",
+                        death: "기원전 531년경",
+                        field: "철학",
+                        summary: "인위적인 제도와 욕망이 오히려 세상의 혼란을 부추긴다고 보고, 만물의 근원인 도(道)에 순응하는 무위자연(無爲自然)의 지혜를 담은 철학서입니다."
+                    },
+                    {
+                        title: "손자병법",
+                        pubYear: "기원전 5세기경",
+                        author: "손자 (손무)",
+                        birth: "기원전 544년경",
+                        death: "기원전 496년경",
+                        field: "정치·사회",
+                        summary: "전쟁이 일상화된 시대에 싸우지 않고 이기는 부전승(不戰勝)의 전략과 지피지기(知彼知己)의 통찰을 체계화한 불멸의 전략 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-006",
+                year: "기원전 490년",
+                era: "고대",
+                title: "페르시아 전쟁 (마라톤·살라미스 전투)",
+                significance: "거대한 아케메네스 페르시아 제국의 침략을 아테네와 스파르타 중심의 그리스 연합군이 격퇴함으로써, 서구 민주주의와 자유 도시국가 문명이 보존되었습니다.",
+                books: [
+                    {
+                        title: "역사 (Historiai)",
+                        pubYear: "기원전 430년경",
+                        author: "헤로도토스",
+                        birth: "기원전 484년경",
+                        death: "기원전 425년경",
+                        field: "역사·인류",
+                        summary: "페르시아 전쟁의 원인과 경과를 기록하며 동양의 전제군주제와 그리스 자유 시민 사회의 충돌을 탐구한 인류 최초의 체계적 역사서입니다."
+                    },
+                    {
+                        title: "페르시아인들",
+                        pubYear: "기원전 472년",
+                        author: "아이스킬로스",
+                        birth: "기원전 525년경",
+                        death: "기원전 456년경",
+                        field: "문학·비평",
+                        summary: "살라미스 해전에 직접 참전했던 작가가 패배한 페르시아 궁정의 시각에서 오만(휘브리스)이 부르는 파멸을 그려낸 현존 최고(最古)의 그리스 비극입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-007",
+                year: "기원전 431년",
+                era: "고대",
+                title: "펠로폰네소스 전쟁과 소크라테스 처형",
+                significance: "아테네와 스파르타 간의 27년 내전으로 그리스 세계가 몰락하고, 전후 혼란 속에서 아테네 민주정이 철학자 소크라테스를 사형에 처하며 지성사에 깊은 충격을 남겼습니다.",
+                books: [
+                    {
+                        title: "펠로폰네소스 전쟁사",
+                        pubYear: "기원전 400년경",
+                        author: "투키디데스",
+                        birth: "기원전 460년경",
+                        death: "기원전 395년경",
+                        field: "역사·인류",
+                        summary: "신들의 개입을 배제하고 권력 정치와 인간 본성의 공포·명예·이익이 전쟁을 일으킨다는 냉철한 현실주의 역사 서술의 표준을 확립했습니다."
+                    },
+                    {
+                        title: "국가 (Politeia)",
+                        pubYear: "기원전 375년경",
+                        author: "플라톤",
+                        birth: "기원전 427년",
+                        death: "기원전 347년",
+                        field: "철학",
+                        summary: "스승 소크라테스를 처형한 타락한 민주정에 환멸을 느낀 플라톤이 진정한 정의란 무엇인가를 탐구하며 철인통치와 이데아론을 제시한 서양 철학의 정점입니다."
+                    },
+                    {
+                        title: "소크라테스의 변명",
+                        pubYear: "기원전 399년경",
+                        author: "플라톤",
+                        birth: "기원전 427년",
+                        death: "기원전 347년",
+                        field: "철학",
+                        summary: "법정에 선 소크라테스가 '성찰하지 않는 삶은 살 가치가 없다'고 선언하며 진리와 양심을 위해 죽음을 받아들이는 장면을 기록한 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-008",
+                year: "기원전 334년",
+                era: "고대",
+                title: "알렉산드로스 대왕의 동방 원정과 헬레니즘 시대",
+                significance: "그리스에서 페르시아, 인더스강에 이르는 대제국 건설로 그리스 문화와 오리엔트 문화가 융합된 코스모폴리탄적인 헬레니즘 세계가 열렸습니다.",
+                books: [
+                    {
+                        title: "기하학 원론",
+                        pubYear: "기원전 300년경",
+                        author: "유클리드",
+                        birth: "기원전 325년경",
+                        death: "기원전 265년경",
+                        field: "과학·의학",
+                        summary: "헬레니즘 학문의 중심지 알렉산드리아에서 집필된 책으로, 공리와 연역적 증명을 통해 기하학 체계를 완성하여 2천 년 넘게 과학적 사고의 모델이 되었습니다."
+                    },
+                    {
+                        title: "니코마코스 윤리학",
+                        pubYear: "기원전 330년경",
+                        author: "아리스토텔레스",
+                        birth: "기원전 384년",
+                        death: "기원전 322년",
+                        field: "철학",
+                        summary: "알렉산드로스의 스승이었던 아리스토텔레스가 인간의 궁극적 목적인 행복(에우다이모니아)과 중용의 덕을 체계화한 윤리학의 최고봉입니다."
+                    },
+                    {
+                        title: "메노이케우스에게 보내는 편지",
+                        pubYear: "기원전 300년경",
+                        author: "에피쿠로스",
+                        birth: "기원전 341년",
+                        death: "기원전 270년",
+                        field: "철학",
+                        summary: "폴리스 붕괴 이후 거대 제국 속에서 불안을 느끼는 개인들에게 마음의 평정(아타락시아)과 소박한 우정을 통한 행복의 길을 제시했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-009",
+                year: "기원전 221년",
+                era: "고대",
+                title: "진시황의 중국 최초 통일과 법가 통치",
+                significance: "전국시대를 종식하고 문자·화폐·도량형을 통일하여 중앙집권적 황제 지배 체제를 확립했으나, 가혹한 법가 통치와 분서갱유로 단명했습니다.",
+                books: [
+                    {
+                        title: "한비자",
+                        pubYear: "기원전 233년경",
+                        author: "한비자",
+                        birth: "기원전 280년경",
+                        death: "기원전 233년",
+                        field: "정치·사회",
+                        summary: "진시황이 탐독하며 통일 제국의 통치 철학으로 삼은 저서로, 도덕이 아닌 엄격한 법(法)·술(術)·세(勢)를 통한 강력한 국가 통치를 주장했습니다."
+                    },
+                    {
+                        title: "사기 (史記)",
+                        pubYear: "기원전 91년경",
+                        author: "사마천",
+                        birth: "기원전 145년경",
+                        death: "기원전 86년경",
+                        field: "역사·인류",
+                        summary: "진나라의 흥망과 한나라 초기까지의 역사를 기전체로 서술하며, 권력자의 승패뿐만 아니라 인간 군상의 비극과 의지를 불멸의 문장으로 남겼습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-010",
+                year: "기원전 44년",
+                era: "고대",
+                title: "율리우스 카이사르 암살과 로마 공화정 붕괴",
+                significance: "카이사르의 독재와 암살, 뒤이은 내전과 악티움 해전을 거쳐 로마는 공화정을 마감하고 아우구스투스 황제 중심의 제정(팍스 로마나)으로 전환했습니다.",
+                books: [
+                    {
+                        title: "의무론 (De Officiis)",
+                        pubYear: "기원전 44년",
+                        author: "키케로",
+                        birth: "기원전 106년",
+                        death: "기원전 43년",
+                        field: "철학",
+                        summary: "카이사르 암살 직후 공화정의 위기 속에서 공직자와 시민이 지켜야 할 도덕적 의무와 정의, 참주 타도의 정당성을 역설한 로마 인문주의의 정수입니다."
+                    },
+                    {
+                        title: "아이네이스",
+                        pubYear: "기원전 19년",
+                        author: "베르길리우스",
+                        birth: "기원전 70년",
+                        death: "기원전 19년",
+                        field: "문학·비평",
+                        summary: "아우구스투스의 로마 제국 평화 시대를 맞아 트로이 영웅 아이네아스의 고난과 로마 건국 사명을 노래한 로마 최고의 국민 서사시입니다."
+                    },
+                    {
+                        title: "플루타르코스 영웅전",
+                        pubYear: "100년경",
+                        author: "플루타르코스",
+                        birth: "46년경",
+                        death: "120년경",
+                        field: "역사·인류",
+                        summary: "알렉산드로스와 카이사르 등 그리스와 로마의 위인들을 짝지어 비교하며, 역사의 격변 속에서 인물의 성격과 도덕적 선택이 운명을 어떻게 가르는지 조명했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-011",
+                year: "180년경",
+                era: "고대",
+                title: "팍스 로마나의 황혼과 안토니누스 역병",
+                significance: "로마 제국의 최전성기 말엽, 변경의 게르만족 침입과 제국 전역을 휩쓴 역병(안토니누스 역병) 속에서 황제와 시민들은 내면의 평온을 추구했습니다.",
+                books: [
+                    {
+                        title: "명상록",
+                        pubYear: "170~180년",
+                        author: "마르쿠스 아우렐리우스",
+                        birth: "121년",
+                        death: "180년",
+                        field: "철학",
+                        summary: "전선에서 야만족과 싸우며 역병과 배신을 견뎌내던 로마 황제가 스스로에게 쓴 일기로, 스토아 철학에 기반한 이성적 절제와 우주적 연대를 성찰합니다."
+                    },
+                    {
+                        title: "알마게스트",
+                        pubYear: "150년경",
+                        author: "프톨레마이오스",
+                        birth: "100년경",
+                        death: "170년경",
+                        field: "과학·의학",
+                        summary: "로마 제국기 알렉산드리아에서 고대 그리스 천문학을 집대성하여 지구중심설(천동설)을 수학적으로 체계화한 책으로, 중세 천문학의 표준이 되었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-012",
+                year: "313년",
+                era: "고대",
+                title: "밀라노 칙령 (기독교 공인)",
+                significance: "콘스탄티누스 대제가 기독교에 대한 박해를 중지하고 신앙의 자유를 공인함으로써, 기독교가 로마 제국의 국교이자 유럽 정신문명의 주축으로 자리 잡았습니다.",
+                books: [
+                    {
+                        title: "고백록",
+                        pubYear: "400년",
+                        author: "아우구스티누스",
+                        birth: "354년",
+                        death: "430년",
+                        field: "심리·언어",
+                        summary: "기독교 공인 이후 제국의 지식인이었던 아우구스티누스가 방황과 회심의 내면사를 기록한 서양 최초의 근대적 자서전이자 신학·철학 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-013",
+                year: "410년 ~ 476년",
+                era: "고대",
+                title: "서고트족의 로마 약탈과 서로마 제국 멸망",
+                significance: "'영원의 도시' 로마가 이민족에게 함락되고 476년 서로마 제국이 멸망하면서 고대 지중해 세계가 종언을 고하고 유럽 중세 시대가 열렸습니다.",
+                books: [
+                    {
+                        title: "신국론 (De Civitate Dei)",
+                        pubYear: "426년",
+                        author: "아우구스티누스",
+                        birth: "354년",
+                        death: "430년",
+                        field: "철학",
+                        summary: "로마 약탈의 원인이 기독교 수용 때문이라는 비난에 맞서, 지상 국가의 흥망을 넘어 영원한 '신의 도성'을 향한 기독교 역사철학을 정립했습니다."
+                    },
+                    {
+                        title: "철학의 위안",
+                        pubYear: "524년",
+                        author: "보에티우스",
+                        birth: "480년",
+                        death: "524년",
+                        field: "철학",
+                        summary: "서로마 멸망 후 동고트 왕국에서 반역 누명을 쓰고 처형을 기다리던 학자가 옥중에서 집필한 책으로, 운명의 변덕을 넘어서는 이성과 진정한 행복을 논했습니다."
+                    },
+                    {
+                        title: "로마 제국 쇠망사",
+                        pubYear: "1776년",
+                        author: "에드워드 기번",
+                        birth: "1737년",
+                        death: "1794년",
+                        field: "역사·인류",
+                        summary: "팍스 로마나 이후 서로마와 동로마 제국이 쇠퇴하고 멸망하기까지의 1,300년 역사를 방대한 사료와 계몽주의적 시각으로 분석한 근대 역사학의 기념비입니다."
+                    }
+                ]
+            },
+
+            // ---------------- 2. 중세 ----------------
+            {
+                id: "evt-014",
+                year: "527년",
+                era: "중세",
+                title: "유스티니아누스 대제의 비잔티움 중흥",
+                significance: "동로마 제국의 유스티니아누스 1세가 옛 로마 영토를 일부 수복하고 하기아 소피아 대성당을 건립하며 로마법 체계를 집대성했습니다.",
+                books: [
+                    {
+                        title: "로마법 대전 (코르푸스 유리스 키빌리스)",
+                        pubYear: "534년",
+                        author: "트리보니아누스 외 (유스티니아누스 칙령)",
+                        birth: "500년경",
+                        death: "547년",
+                        field: "정치·사회",
+                        summary: "수백 년간 축적된 로마의 칙령과 법학자 학설을 체계적으로 편찬한 법전으로, 중세 유럽 대학의 법학 부활과 현대 대륙법계의 직접적인 토대가 되었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-015",
+                year: "610년 ~ 750년",
+                era: "중세",
+                title: "이슬람의 탄생과 아바스 왕조의 지혜의 집",
+                significance: "아라비아 반도에서 시작된 이슬람이 대제국을 건설하고, 바그다드의 '지혜의 집(바이트 알히크마)'을 중심으로 그리스·페르시아·인도의 학문을 번역·발전시켰습니다.",
+                books: [
+                    {
+                        title: "복원과 대비에 의한 계산 (알자브르)",
+                        pubYear: "820년경",
+                        author: "알콰리즈미",
+                        birth: "780년경",
+                        death: "850년경",
+                        field: "과학·의학",
+                        summary: "바그다드 지혜의 집에서 집필된 수학서로, 일차·이차방정식의 해법을 체계화하여 '대수학(Algebra)'과 '알고리즘(Algorithm)'의 어원이 되었습니다."
+                    },
+                    {
+                        title: "의학정전 (Al-Qanun fi al-Tibb)",
+                        pubYear: "1025년",
+                        author: "이븐 시나 (아비켄나)",
+                        birth: "980년",
+                        death: "1037년",
+                        field: "과학·의학",
+                        summary: "고대 그리스 의학과 이슬람 임상 의학을 통합한 5권짜리 의학 백과사전으로, 라틴어로 번역되어 17세기까지 유럽 의과대학의 표준 교과서로 쓰였습니다."
+                    },
+                    {
+                        title: "광학의 서",
+                        pubYear: "1021년",
+                        author: "이븐 알하이삼",
+                        birth: "965년경",
+                        death: "1040년경",
+                        field: "과학·의학",
+                        summary: "빛이 눈에서 나온다는 고대 학설을 반박하고 물체에서 반사된 빛이 눈으로 들어온다는 사실을 실험으로 증명하여 근대 과학적 실험방법론의 선구가 되었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-016",
+                year: "1095년 ~ 1291년",
+                era: "중세",
+                title: "십자군 전쟁과 동서 교류의 재개",
+                significance: "예루살렘 탈환을 명분으로 200년간 이어진 십자군 전쟁은 교황권의 약화와 상업 도시의 부흥을 가져왔으며, 이슬람 세계에 보존된 아리스토텔레스 철학이 유럽으로 역유입되는 계기가 되었습니다.",
+                books: [
+                    {
+                        title: "신학대전 (Summa Theologiae)",
+                        pubYear: "1274년",
+                        author: "토마스 아퀴나스",
+                        birth: "1225년",
+                        death: "1274년",
+                        field: "철학",
+                        summary: "십자군 시대 아랍 세계를 통해 재발견된 아리스토텔레스의 이성 철학을 기독교 신학과 완벽하게 조화시켜 중세 스콜라 철학의 금자탑을 세웠습니다."
+                    },
+                    {
+                        title: "알렉시아드",
+                        pubYear: "1148년",
+                        author: "안나 콤네네",
+                        birth: "1083년",
+                        death: "1153년",
+                        field: "역사·인류",
+                        summary: "비잔티움 제국의 황녀가 아버지 알렉시오스 1세의 치세와 제1차 십자군 기사들의 콘스탄티노폴리스 도착을 동로마의 시선에서 생생히 기록한 명저입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-017",
+                year: "1206년 ~ 1279년",
+                era: "중세",
+                title: "몽골 제국의 유라시아 통합 (팍스 몽골리카)",
+                significance: "칭기즈 칸과 후예들이 유라시아 대륙을 하나로 연결하면서 역참제와 안전한 교역로가 열려 동서양의 인적·물적·지적 교류가 유례없이 활성화되었습니다.",
+                books: [
+                    {
+                        title: "동방견문록",
+                        pubYear: "1298년경",
+                        author: "마르코 폴로",
+                        birth: "1254년",
+                        death: "1324년",
+                        field: "역사·인류",
+                        summary: "쿠빌라이 칸 치하의 원나라를 여행하고 17년간 머문 경험을 기록하여 유럽인들에게 아시아의 풍요와 문명을 알리고 훗날 대항해시대의 탐험 열망을 자극했습니다."
+                    },
+                    {
+                        title: "리흘라 (여행기)",
+                        pubYear: "1355년",
+                        author: "이븐 바투타",
+                        birth: "1304년",
+                        death: "1369년",
+                        field: "역사·인류",
+                        summary: "몽골 제국과 이슬람 세계의 교역망을 따라 북아프리카부터 중동, 인도, 원나라까지 약 12만 km를 여행하며 14세기 세계의 문화를 생생하게 증언한 기록입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-018",
+                year: "1215년",
+                era: "중세",
+                title: "영국 마그나 카르타 (대헌장) 승인",
+                significance: "영국 존 왕의 실정과 과도한 징세에 반발한 귀족들이 왕권을 법 아래에 두는 대헌장에 서명함으로써, 의회 민주주의와 법치주의, 인권 선언의 역사적 시발점이 되었습니다.",
+                books: [
+                    {
+                        title: "통치론 (제2논고)",
+                        pubYear: "1689년",
+                        author: "존 로크",
+                        birth: "1632년",
+                        death: "1704년",
+                        field: "정치·사회",
+                        summary: "마그나 카르타에서 시작된 영국 입헌주의 전통을 계승하여, 생명·자유·재산이라는 천부인권과 통치자의 권력 제한, 저항권을 체계화했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-019",
+                year: "1347년",
+                era: "중세",
+                title: "유럽 흑사병(페스트) 대유행",
+                significance: "유럽 인구의 약 3분의 1이 사망한 대재앙으로, 노동력 부족으로 인한 농노제 해체와 교회의 권위 실추, 인간 삶과 현세에 대한 새로운 자각(르네상스)을 촉진했습니다.",
+                books: [
+                    {
+                        title: "데카메론",
+                        pubYear: "1353년",
+                        author: "조반니 보카치오",
+                        birth: "1313년",
+                        death: "1375년",
+                        field: "문학·비평",
+                        summary: "1348년 피렌체를 덮친 흑사병을 피해 시골 별장으로 피신한 젊은 남녀 10명이 열흘간 나눈 100편의 이야기를 통해 중세의 금욕주의를 넘어선 인간 본성을 그렸습니다."
+                    },
+                    {
+                        title: "역사서설 (무캇디마)",
+                        pubYear: "1377년",
+                        author: "이븐 할둔",
+                        birth: "1332년",
+                        death: "1406년",
+                        field: "역사·인류",
+                        summary: "흑사병으로 부모와 스승을 잃고 문명의 붕괴를 목격한 이븐 할둔이 왕조의 흥망성쇠와 사회적 결속력(아사비야), 인구 변동의 법칙을 과학적으로 분석한 명저입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-020",
+                year: "1434년 ~ 1453년",
+                era: "중세",
+                title: "이탈리아 르네상스와 콘스탄티노폴리스 함락",
+                significance: "메디치 가문의 피렌체 후원과 1453년 비잔티움 제국 멸망으로 망명한 그리스 학자들의 고전 문헌 유입이 결합하여 인간 중심의 르네상스 문예부흥이 만개했습니다.",
+                books: [
+                    {
+                        title: "신곡",
+                        pubYear: "1321년",
+                        author: "단테 알리기에리",
+                        birth: "1265년",
+                        death: "1321년",
+                        field: "문학·비평",
+                        summary: "라틴어가 아닌 이탈리아 토스카나 방언으로 지옥·연옥·천국을 순례하는 인간의 영혼을 그려 중세 신학과 르네상스 인문주의를 잇는 가교가 되었습니다."
+                    },
+                    {
+                        title: "이탈리아 르네상스의 문화",
+                        pubYear: "1860년",
+                        author: "야코프 부르크하르트",
+                        birth: "1818년",
+                        death: "1897년",
+                        field: "역사·인류",
+                        summary: "르네상스를 단순한 고전 부활이 아니라 '세계와 인간의 발견', 즉 근대적 개인주의가 탄생한 결정적 시대로 규정한 문화사학의 고전입니다."
+                    }
+                ]
+            },
+
+            // ---------------- 3. 근대 여명 ----------------
+            {
+                id: "evt-021",
+                year: "1450년경",
+                era: "근대 여명",
+                title: "구텐베르크의 금속활자 인쇄술 발명",
+                significance: "포도 압착기를 개량한 인쇄기와 금속활자의 결합으로 책의 대량 복제가 가능해지면서, 지식의 독점이 깨지고 종교개혁과 과학혁명의 폭발적 확산 기반이 마련되었습니다.",
+                books: [
+                    {
+                        title: "구텐베르크 은하계",
+                        pubYear: "1962년",
+                        author: "마셜 맥루언",
+                        birth: "1911년",
+                        death: "1980년",
+                        field: "문학·비평",
+                        summary: "구텐베르크의 활판 인쇄술이 인류의 감각 비율을 청각에서 시각 중심으로 재편하고 개인주의·민족주의·근대 과학적 사고방식을 탄생시켰음을 분석한 미디어 이론 고전입니다."
+                    },
+                    {
+                        title: "우신예찬",
+                        pubYear: "1511년",
+                        author: "데시데리우스 에라스뮈스",
+                        birth: "1466년",
+                        death: "1536년",
+                        field: "철학",
+                        summary: "인쇄술의 힘으로 유럽 전역에서 베스트셀러가 된 책으로, 성직자와 스콜라 학자들의 위선과 어리석음을 통렬히 풍자하여 종교개혁의 토양을 일구었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-022",
+                year: "1492년",
+                era: "근대 여명",
+                title: "콜럼버스의 아메리카 도달과 대항해시대",
+                significance: "유럽과 아메리카 대륙이 연결되면서 동식물·질병·문화의 대이동(콜럼버스 교환)과 세계 자본주의 시장이 형성되었으나, 아메리카 원주민 문명의 파괴와 노예무역이 시작되었습니다.",
+                books: [
+                    {
+                        title: "유토피아",
+                        pubYear: "1516년",
+                        author: "토머스 모어",
+                        birth: "1478년",
+                        death: "1535년",
+                        field: "정치·사회",
+                        summary: "신대륙 항해자 히슬로다에우스의 견문 형식을 빌려 사유재산과 빈곤이 없는 이상 섬나라를 묘사함으로써 탐욕스러운 당시 영국 사회를 비판한 작품입니다."
+                    },
+                    {
+                        title: "수상록 (Essais)",
+                        pubYear: "1580년",
+                        author: "미셸 드 몽테뉴",
+                        birth: "1533년",
+                        death: "1592년",
+                        field: "철학",
+                        summary: "신대륙 원주민(식인종에 관하여)과의 만남을 성찰하며 '야만'이란 단지 자신의 관습과 다른 것을 부르는 말일 뿐이라는 문화상대주의적 통찰을 제시했습니다."
+                    },
+                    {
+                        title: "인디아스 제국의 파괴에 관한 간략한 보고",
+                        pubYear: "1552년",
+                        author: "바르톨로메 데 라스 카사스",
+                        birth: "1484년",
+                        death: "1566년",
+                        field: "역사·인류",
+                        summary: "스페인 정복자들이 아메리카 원주민에게 가한 잔혹한 착취와 학살을 고발하며 원주민도 평등한 인격체임을 옹호한 인권 사상의 선구적 기록입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-023",
+                year: "1494년 ~ 1527년",
+                era: "근대 여명",
+                title: "이탈리아 전쟁과 도시국가들의 몰락",
+                significance: "프랑스와 스페인 등 강대국들이 분열된 이탈리아 반도를 침공하여 유린하면서, 이상적인 도덕 정치가 아닌 냉혹한 권력 현실을 직시하는 근대 정치학이 탄생했습니다.",
+                books: [
+                    {
+                        title: "군주론",
+                        pubYear: "1532년 (1513년 탈고)",
+                        author: "니콜로 마키아벨리",
+                        birth: "1469년",
+                        death: "1527년",
+                        field: "정치·사회",
+                        summary: "외세의 침략으로 무너진 조국 이탈리아를 구하기 위해 정치를 종교와 도덕에서 분리하고, 군주가 갖추어야 할 비르투(역량)와 현실주의 권력 기술을 제시했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-024",
+                year: "1517년",
+                era: "근대 여명",
+                title: "마르틴 루터의 95개조 반박문과 종교개혁",
+                significance: "면벌부 판매 비판을 계기로 서유럽 기독교 세계가 가톨릭과 개신교로 분열되었으며, 개인의 양심과 성서 해석의 자유가 강조되어 근대 개인주의 발전에 기여했습니다.",
+                books: [
+                    {
+                        title: "그리스도인의 자유",
+                        pubYear: "1520년",
+                        author: "마르틴 루터",
+                        birth: "1483년",
+                        death: "1546년",
+                        field: "심리·언어",
+                        summary: "교회의 성례전이나 선행이 아닌 오직 믿음(Sola Fide)을 통한 구원을 설파하며, 만인사제설을 통해 인간의 내면적 자유와 이웃 봉사를 역설했습니다."
+                    },
+                    {
+                        title: "기독교 강요",
+                        pubYear: "1536년",
+                        author: "장 칼뱅",
+                        birth: "1509년",
+                        death: "1564년",
+                        field: "심리·언어",
+                        summary: "개신교 신학을 논리적으로 집대성하고 예정설과 직업소명설을 체계화하여, 훗날 근대 자본주의와 시민혁명의 정신적 원동력이 되었습니다."
+                    },
+                    {
+                        title: "프로테스탄트 윤리와 자본주의 정신",
+                        pubYear: "1905년",
+                        author: "막스 베버",
+                        birth: "1864년",
+                        death: "1920년",
+                        field: "정치·사회",
+                        summary: "종교개혁 이후 칼뱅주의의 금욕적 직업소명 윤리가 어떻게 합리적 근대 자본주의 정신을 형성했는지 규명한 사회학의 최고 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-025",
+                year: "1543년",
+                era: "근대 여명",
+                title: "코페르니쿠스 지동설 발표 (과학혁명의 시작)",
+                significance: "지구가 우주의 중심이라는 천동설을 뒤집고 태양이 중심이라는 지동설을 제창함으로써, 인류의 우주관과 종교적 세계관을 근본적으로 뒤흔든 과학혁명이 시작되었습니다.",
+                books: [
+                    {
+                        title: "천구의 회전에 관하여",
+                        pubYear: "1543년",
+                        author: "니콜라우스 코페르니쿠스",
+                        birth: "1473년",
+                        death: "1543년",
+                        field: "과학·의학",
+                        summary: "수학적 계산과 관측을 바탕으로 지구가 자전하며 태양 주위를 공전한다는 태양중심설을 논증하여 근대 천문학과 과학혁명의 문을 연 기념비적 저서입니다."
+                    },
+                    {
+                        title: "인체의 구조에 관하여",
+                        pubYear: "1543년",
+                        author: "안드레아스 베살리우스",
+                        birth: "1514년",
+                        death: "1564년",
+                        field: "과학·의학",
+                        summary: "코페르니쿠스와 같은 해에 출간된 책으로, 고대 갈레노스의 오류를 직접 인체 해부로 바로잡아 근대 해부학과 의학 혁명을 이끌었습니다."
+                    },
+                    {
+                        title: "두 우주 체계에 관한 대화",
+                        pubYear: "1632년",
+                        author: "갈릴레오 갈릴레이",
+                        birth: "1564년",
+                        death: "1642년",
+                        field: "과학·의학",
+                        summary: "망원경으로 목성의 위성과 금성의 위상을 관측한 증거를 토대로 지동설을 옹호하여 종교재판에 회부되었으나 근대 실험물리학의 승리를 이끌었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-026",
+                year: "1618년 ~ 1648년",
+                era: "근대 여명",
+                title: "30년 전쟁과 베스트팔렌 조약",
+                significance: "독일 땅을 초토화시킨 유럽 마지막 대규모 종교전쟁 끝에 베스트팔렌 조약이 체결되어, 영토 주권과 내정 불간섭을 원칙으로 하는 근대 주권국가 체제가 확립되었습니다.",
+                books: [
+                    {
+                        title: "전쟁과 평화의 법",
+                        pubYear: "1625년",
+                        author: "휴고 그로티우스",
+                        birth: "1583년",
+                        death: "1645년",
+                        field: "정치·사회",
+                        summary: "30년 전쟁의 참상을 목격하며 신의 뜻이 아닌 인간의 보편적 이성(자연법)에 근거해 국가 간 전쟁 규칙과 평화 질서를 규정한 근대 국제법의 원전입니다."
+                    },
+                    {
+                        title: "방법서설",
+                        pubYear: "1637년",
+                        author: "르네 데카르트",
+                        birth: "1596년",
+                        death: "1650년",
+                        field: "철학",
+                        summary: "30년 전쟁의 진중에서 사색을 시작한 데카르트가 모든 불확실한 권위를 의심한 끝에 '나는 생각한다, 고로 존재한다'는 근대 합리론의 주춧돌을 세웠습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-027",
+                year: "1642년 ~ 1649년",
+                era: "근대 여명",
+                title: "영국 청교도 혁명 (잉글랜드 내전)과 찰스 1세 처형",
+                significance: "왕권신수설을 내세운 찰스 1세와 의회파가 충돌한 내전 끝에 국왕이 처형되고 공화정이 수립되면서, 국가 권력의 정당성과 사회계약에 대한 치열한 철학적 논쟁이 벌어졌습니다.",
+                books: [
+                    {
+                        title: "리바이어던",
+                        pubYear: "1651년",
+                        author: "토머스 홉스",
+                        birth: "1588년",
+                        death: "1679년",
+                        field: "정치·사회",
+                        summary: "잉글랜드 내전의 무질서와 공포를 겪은 홉스가 '만인의 만인에 대한 투쟁' 상태를 끝내기 위해 시민들이 계약을 맺어 강력한 주권국가(리바이어던)를 세운다고 논증했습니다."
+                    },
+                    {
+                        title: "아레오파지티카",
+                        pubYear: "1644년",
+                        author: "존 밀턴",
+                        birth: "1608년",
+                        death: "1674년",
+                        field: "정치·사회",
+                        summary: "청교도 혁명기 의회의 출판 사전검열법에 맞서 언론과 출판의 자유가 진리 발견의 필수 조건임을 역설한 표현의 자유 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-028",
+                year: "1687년 ~ 1688년",
+                era: "근대 여명",
+                title: "뉴턴 역학 완성과 영국 명예혁명",
+                significance: "뉴턴이 우주의 물리 법칙을 수학적으로 통합해 과학혁명을 완성했고, 이듬해 영국은 피를 흘리지 않고 의회 중심의 입헌군주제를 확립하여 계몽주의 시대를 열었습니다.",
+                books: [
+                    {
+                        title: "자연철학의 수학적 원리 (프린키피아)",
+                        pubYear: "1687년",
+                        author: "아이작 뉴턴",
+                        birth: "1642년",
+                        death: "1727년",
+                        field: "과학·의학",
+                        summary: "운동의 3법칙과 만유인력의 법칙을 통해 지상과 천상의 운동을 하나의 수학적 체계로 통합함으로써 인류 이성에 대한 무한한 신뢰와 계몽사상을 촉발했습니다."
+                    },
+                    {
+                        title: "통치론 & 인간지성론",
+                        pubYear: "1689년",
+                        author: "존 로크",
+                        birth: "1632년",
+                        death: "1704년",
+                        field: "철학",
+                        summary: "명예혁명의 정당성을 이론화하여 국민 주권과 삼권분립의 기초를 닦았으며, 인간의 마음은 백지(타불라 라사)라는 경험론 철학을 확립했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-029",
+                year: "1750년대 ~ 1770년대",
+                era: "근대 여명",
+                title: "유럽 계몽주의 운동과 백과전서 편찬",
+                significance: "이성의 빛으로 무지와 미신, 절대왕정의 압제를 타파하려는 계몽사상이 프랑스 살롱과 지식인 사회를 중심으로 확산되며 근대 시민혁명의 사상적 화약고가 되었습니다.",
+                books: [
+                    {
+                        title: "백과전서 (Encyclopédie)",
+                        pubYear: "1751~1772년",
+                        author: "드니 디드로 & 달랑베르",
+                        birth: "1713년",
+                        death: "1784년",
+                        field: "철학",
+                        summary: "볼테르, 루소, 몽테스키외 등 당대 최고 지성들이 참여해 과학·기술·철학 지식을 체계화함으로써 교회와 왕정의 지적 독점을 무너뜨린 계몽주의의 기념비입니다."
+                    },
+                    {
+                        title: "사회계약론",
+                        pubYear: "1762년",
+                        author: "장자크 루소",
+                        birth: "1712년",
+                        death: "1778년",
+                        field: "정치·사회",
+                        summary: "'인간은 자유롭게 태어났으나 도처에서 쇠사슬에 묶여 있다'는 선언과 함께, 주권은 오직 국민의 일반의지에 있다는 근대 민주주의의 핵심 원리를 제시했습니다."
+                    },
+                    {
+                        title: "관용론",
+                        pubYear: "1763년",
+                        author: "볼테르",
+                        birth: "1694년",
+                        death: "1778년",
+                        field: "철학",
+                        summary: "종교적 광신과 사법 살인(칼라스 사건)에 맞서 사상과 신앙의 자유, 인간 이성에 기반한 관용의 정신을 호소한 계몽주의 대표 저서입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-030",
+                year: "1760년대 ~ 1830년대",
+                era: "근대 여명",
+                title: "영국 산업혁명 시작",
+                significance: "제임스 와트의 증기기관 개량과 방직기 발명으로 가내 수공업이 공장제 기계공업으로 전환되면서 인류 생산력이 폭발적으로 증가했으나 도시 빈곤과 노동 착취 문제도 대두되었습니다.",
+                books: [
+                    {
+                        title: "국부론",
+                        pubYear: "1776년",
+                        author: "애덤 스미스",
+                        birth: "1723년",
+                        death: "1790년",
+                        field: "경제학",
+                        summary: "산업혁명 초기 분업의 생산성 혁신을 포착하여, 국가의 중상주의적 간섭 대신 시장의 '보이지 않는 손'과 자유방임이 국부를 증진시킨다는 고전파 경제학을 창시했습니다."
+                    },
+                    {
+                        title: "인구론",
+                        pubYear: "1798년",
+                        author: "토머스 맬서스",
+                        birth: "1766년",
+                        death: "1834년",
+                        field: "경제학",
+                        summary: "산업화 속 급증하는 인구는 기하급수적으로 늘지만 식량은 산술급수적으로 증가하므로 빈곤과 기근이 필연적이라고 분석해 다윈의 진화론에도 영감을 주었습니다."
+                    },
+                    {
+                        title: "영국 노동자 계급의 상태",
+                        pubYear: "1845년",
+                        author: "프리드리히 엥겔스",
+                        birth: "1820년",
+                        death: "1895년",
+                        field: "정치·사회",
+                        summary: "산업혁명의 심장부 맨체스터의 방직공장을 직접 조사하여 자본주의 산업화가 노동자의 건강과 삶을 어떻게 파괴하는지 고발한 사회과학 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-031",
+                year: "1776년",
+                era: "근대 여명",
+                title: "미국 독립혁명과 독립선언서 발표",
+                significance: "영국 식민지였던 북미 13개 주가 계몽사상에 기반하여 독립을 선언하고 삼권분립과 연방제를 채택한 세계 최초의 근대 성문 헌법 국가를 수립했습니다.",
+                books: [
+                    {
+                        title: "상식 (Common Sense)",
+                        pubYear: "1776년",
+                        author: "토머스 페인",
+                        birth: "1737년",
+                        death: "1809년",
+                        field: "정치·사회",
+                        summary: "영국 국왕의 세습 통치의 부당함을 명쾌한 언어로 비판하고 아메리카 대륙의 완전 독립과 공화국 수립을 촉구하여 독립혁명의 불길을 지핀 소책자입니다."
+                    },
+                    {
+                        title: "페더럴리스트 페이퍼 (연방주의자 논집)",
+                        pubYear: "1788년",
+                        author: "알렉산더 해밀턴, 제임스 매디슨, 존 제이",
+                        birth: "1755년",
+                        death: "1804년",
+                        field: "정치·사회",
+                        summary: "미합중국 헌법 비준을 위해 집필된 85편의 논설로, 거대 공화국에서 다수의 횡포를 막고 권력 분립과 견제·균형을 실현하는 헌법 이론의 정수를 담았습니다."
+                    },
+                    {
+                        title: "미국의 민주주의",
+                        pubYear: "1835년",
+                        author: "알렉시 드 토크빌",
+                        birth: "1805년",
+                        death: "1859년",
+                        field: "정치·사회",
+                        summary: "독립 반세기 후의 미국 사회를 관찰하며 평등의 확산이 가져온 민주주의의 활력과 함께 '다수의 전제'라는 잠재적 위험성을 통찰한 정치사회학의 고전입니다."
+                    }
+                ]
+            },
+
+            // ---------------- 4. 혁명과 제국주의 ----------------
+            {
+                id: "evt-032",
+                year: "1789년",
+                era: "혁명과 제국주의",
+                title: "프랑스 대혁명과 인간과 시민의 권리선언",
+                significance: "바스티유 감옥 습격으로 시작된 시민혁명이 봉건적 구체제(앙시앵 레짐)와 절대왕정을 무너뜨리고 자유·평등·박애의 보편적 인권 이념을 전 유럽에 확산시켰습니다.",
+                books: [
+                    {
+                        title: "프랑스 혁명에 관한 성찰",
+                        pubYear: "1790년",
+                        author: "에드먼드 버크",
+                        birth: "1729년",
+                        death: "1797년",
+                        field: "정치·사회",
+                        summary: "추상적 이성에 의존해 역사와 전통을 일거에 파괴하는 급진 혁명이 결국 공포정치와 독재로 귀결될 것이라 예견하며 근대 보수주의 철학을 정립했습니다."
+                    },
+                    {
+                        title: "인간의 권리",
+                        pubYear: "1791년",
+                        author: "토머스 페인",
+                        birth: "1737년",
+                        death: "1809년",
+                        field: "정치·사회",
+                        summary: "에드먼드 버크의 비판을 정면 반박하며 프랑스 혁명의 정당성을 옹호하고, 모든 인간이 타고난 자연권과 사회복지 국가의 기초 아이디어를 제시했습니다."
+                    },
+                    {
+                        title: "여성의 권리 옹호",
+                        pubYear: "1792년",
+                        author: "메리 울스턴크래프트",
+                        birth: "1759년",
+                        death: "1797년",
+                        field: "철학",
+                        summary: "프랑스 혁명의 인권 선언이 남성에게만 국한된 것을 비판하며, 여성도 남성과 동등한 이성을 지닌 존재로서 교육과 시민권을 누려야 한다고 주장한 페미니즘의 효시입니다."
+                    },
+                    {
+                        title: "실천이성비판 & 영구평화론",
+                        pubYear: "1788~1795년",
+                        author: "이마누엘 칸트",
+                        birth: "1724년",
+                        death: "1804년",
+                        field: "철학",
+                        summary: "인간을 수단이 아닌 목적으로 대우하라는 정언명령을 확립하고, 프랑스 혁명 이후 공화정 국가들의 연맹을 통한 세계 영구평화의 조건을 제시했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-033",
+                year: "1804년 ~ 1815년",
+                era: "혁명과 제국주의",
+                title: "나폴레옹 전쟁과 빈 체제 성립",
+                significance: "나폴레옹이 유럽 대륙을 정복하며 혁명의 법과 제도를 전파한 동시에, 이에 맞선 유럽 각국에 민족주의를 일깨웠으며 워털루 패배 후 빈 회의를 통해 보수적 세력균형이 구축되었습니다.",
+                books: [
+                    {
+                        title: "정신현상학",
+                        pubYear: "1807년",
+                        author: "게오르크 빌헬름 프리드리히 헤겔",
+                        birth: "1770년",
+                        death: "1831년",
+                        field: "철학",
+                        summary: "예나 전투에서 나폴레옹을 목격하며 '말 탄 세계정신'이라 불렀던 헤겔이, 의식이 변증법적 투쟁을 거쳐 절대정신에 도달하는 역사의 진보 과정을 체계화했습니다."
+                    },
+                    {
+                        title: "전쟁론 (Vom Kriege)",
+                        pubYear: "1832년",
+                        author: "카를 폰 클라우제비츠",
+                        birth: "1780년",
+                        death: "1831년",
+                        field: "정치·사회",
+                        summary: "나폴레옹 전쟁에 직접 참전한 프로이센 장군이 나폴레옹의 섬멸전 전략을 분석하며 '전쟁은 다른 수단에 의한 정치의 연장'이라는 불멸의 명제를 남겼습니다."
+                    },
+                    {
+                        title: "전쟁과 평화",
+                        pubYear: "1869년",
+                        author: "레프 톨스토이",
+                        birth: "1828년",
+                        death: "1910년",
+                        field: "문학·비평",
+                        summary: "1812년 나폴레옹의 러시아 원정을 배경으로 영웅 개인이 아닌 평범한 민중의 삶과 거대한 역사의 흐름이 역사를 움직인다는 역사철학을 담아낸 대하소설입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-034",
+                year: "1839년 ~ 1842년",
+                era: "혁명과 제국주의",
+                title: "제1차 아편전쟁과 난징 조약",
+                significance: "산업혁명으로 무장한 영국이 청나라를 격파하고 불평등 조약을 강요하면서, 수천 년간 이어진 중화 중심의 동아시아 질서가 붕괴하고 서구 제국주의 침탈이 본격화되었습니다.",
+                books: [
+                    {
+                        title: "해국도지",
+                        pubYear: "1843년",
+                        author: "위원",
+                        birth: "1794년",
+                        death: "1857년",
+                        field: "역사·인류",
+                        summary: "아편전쟁 패배의 충격 속에서 '오랑캐의 뛰어난 기술을 배워 오랑캐를 제압한다(사이장기이제이)'는 기치 아래 세계 지리와 서구 문물을 소개해 청·조선·일본의 개화사상에 큰 영향을 주었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-035",
+                year: "1848년",
+                era: "혁명과 제국주의",
+                title: "유럽 1848년 혁명 (2월 혁명과 민족의 봄)",
+                significance: "프랑스 2월 혁명을 시작으로 독일·오스트리아·이탈리아 등 유럽 전역에서 자유주의·민족주의·사회주의 혁명이 동시다발적으로 폭발하며 새로운 계급 투쟁의 시대를 예고했습니다.",
+                books: [
+                    {
+                        title: "공산당 선언",
+                        pubYear: "1848년",
+                        author: "카를 마르크스 & 프리드리히 엥겔스",
+                        birth: "1818년",
+                        death: "1883년",
+                        field: "정치·사회",
+                        summary: "1848년 혁명 직전 발표된 선언문으로, '지금까지 모든 사회의 역사는 계급투쟁의 역사'라 규정하며 만국의 노동자가 단결하여 자본주의를 타도할 것을 촉구했습니다."
+                    },
+                    {
+                        title: "자유론 (On Liberty)",
+                        pubYear: "1859년",
+                        author: "존 스튜어트 밀",
+                        birth: "1806년",
+                        death: "1873년",
+                        field: "철학",
+                        summary: "1848년 혁명 이후 대중 민주주의와 여론의 압력이 커지는 시대에, 타인에게 해를 끼치지 않는 한 개인의 사상과 표현, 개성의 자유가 절대적으로 보장되어야 함을 역설했습니다."
+                    },
+                    {
+                        title: "자본론 (Das Kapital)",
+                        pubYear: "1867년",
+                        author: "카를 마르크스",
+                        birth: "1818년",
+                        death: "1883년",
+                        field: "경제학",
+                        summary: "1848년 혁명 좌절 후 런던에서 자본주의 경제 구조를 해부하여 상품의 가치, 잉여가치 착취, 자본 축적의 모순을 과학적으로 분석한 혁명적 경제학서입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-036",
+                year: "1853년 ~ 1868년",
+                era: "혁명과 제국주의",
+                title: "일본 개항(흑선 내항)과 메이지 유신",
+                significance: "페리 제독의 무력 시위로 개항한 일본이 막부 체제를 무너뜨리고 메이지 유신을 단행하여, 비서구권 최초로 서구식 근대 산업·군사 국가로 탈바꿈했습니다.",
+                books: [
+                    {
+                        title: "학문의 권장 & 문명론의 개략",
+                        pubYear: "1872~1875년",
+                        author: "후쿠자와 유키치",
+                        birth: "1835년",
+                        death: "1901년",
+                        field: "철학",
+                        summary: "'하늘은 사람 위에 사람을 만들지 않았다'고 선언하며 유교적 신분제를 타파하고 서구 실용 학문과 독립 자존 정신을 수용해 일본 근대화를 이끈 계몽서입니다."
+                    },
+                    {
+                        title: "국화와 칼",
+                        pubYear: "1946년",
+                        author: "루스 베네딕트",
+                        birth: "1887년",
+                        death: "1948년",
+                        field: "역사·인류",
+                        summary: "메이지 유신 이후 급속히 근대화되면서도 전통적 위계질서와 '수치 문화'를 유지한 일본인의 이중적 행동 양식을 문화인류학적으로 분석한 명저입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-037",
+                year: "1859년",
+                era: "혁명과 제국주의",
+                title: "찰스 다윈의 진화론 발표",
+                significance: "자연선택을 통한 생물 진화 이론이 발표되면서, 인간이 신의 특별한 창조물이 아니라 자연 진화의 산물이라는 인식이 확산되어 과학과 철학 전반에 코페르니쿠스적 충격을 주었습니다.",
+                books: [
+                    {
+                        title: "종의 기원",
+                        pubYear: "1859년",
+                        author: "찰스 다윈",
+                        birth: "1809년",
+                        death: "1882년",
+                        field: "과학·의학",
+                        summary: "비글호 항해와 방대한 생물학적 증거를 바탕으로 모든 생물이 공통 조상으로부터 자연선택을 통해 진화해 왔음을 입증하여 현대 생물학의 토대를 세웠습니다."
+                    },
+                    {
+                        title: "차라투스트라는 이렇게 말했다",
+                        pubYear: "1883년",
+                        author: "프리드리히 니체",
+                        birth: "1844년",
+                        death: "1900년",
+                        field: "철학",
+                        summary: "진화론과 과학의 발전으로 기독교적 세계관이 붕괴한 시대에 '신은 죽었다'고 선언하며, 허무주의를 극복하고 스스로 가치를 창조하는 위버멘쉬(초인)를 제시했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-038",
+                year: "1861년 ~ 1865년",
+                era: "혁명과 제국주의",
+                title: "미국 남북전쟁과 노예 해방 선언",
+                significance: "노예제 존폐와 연방 유지를 둘러싼 치열한 내전 끝에 북부가 승리하고 노예제가 폐지됨으로써, 미국이 진정한 단일 민주 연방이자 산업 강국으로 도약하는 계기가 되었습니다.",
+                books: [
+                    {
+                        title: "톰 아저씨의 오두막",
+                        pubYear: "1852년",
+                        author: "해리엇 비처 스토",
+                        birth: "1811년",
+                        death: "1896년",
+                        field: "문학·비평",
+                        summary: "노예제도의 비인간성을 생생하게 그려내 북부 시민들의 반노예제 여론을 폭발시켰으며, 링컨 대통령이 '이 거대한 전쟁을 일으킨 작은 부인'이라 부를 만큼 역사를 움직였습니다."
+                    },
+                    {
+                        title: "흑인의 영혼",
+                        pubYear: "1903년",
+                        author: "W.E.B. 두보이스",
+                        birth: "1868년",
+                        death: "1963년",
+                        field: "정치·사회",
+                        summary: "남북전쟁과 노예 해방 이후에도 지속되는 인종차별과 흑인의 '이중 의식'을 예리하게 분석하여 20세기 미국 흑인 민권운동의 사상적 기초를 놓았습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-039",
+                year: "1884년",
+                era: "혁명과 제국주의",
+                title: "베를린 회의와 아프리카 분할 (신제국주의 절정)",
+                significance: "유럽 열강들이 아프리카 대륙의 식민지 분할 원칙에 합의하면서 전 세계가 서구 제국주의의 식민지로 편입되었고, 이는 곧 열강 간 충돌과 제1차 세계대전의 불씨가 되었습니다.",
+                books: [
+                    {
+                        title: "어둠의 심연",
+                        pubYear: "1899년",
+                        author: "조지프 콘래드",
+                        birth: "1857년",
+                        death: "1924년",
+                        field: "문학·비평",
+                        summary: "벨기에 레오폴드 2세의 잔혹한 콩고 식민 지배를 직접 목격한 작가가 문명이라는 가면 뒤에 숨은 제국주의의 탐욕과 인간 내면의 어둠을 고발한 걸작입니다."
+                    },
+                    {
+                        title: "제국주의론",
+                        pubYear: "1902년",
+                        author: "존 홉슨",
+                        birth: "1858년",
+                        death: "1940년",
+                        field: "경제학",
+                        summary: "유럽의 식민지 쟁탈전이 문명화 사명이 아니라 자본주의의 과소소비와 과잉자본의 해외 투자처 확보에서 비롯된 경제적 현상임을 최초로 규명했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-040",
+                year: "1905년",
+                era: "혁명과 제국주의",
+                title: "아인슈타인 기적의 해 (특수상대성 이론 발표)",
+                significance: "스위스 특허청 직원이던 아인슈타인이 광양자설, 브라운 운동, 특수상대성 이론 논문을 연달아 발표하면서 뉴턴의 절대 시간·공간 개념이 무너지고 현대 물리학 혁명이 시작되었습니다.",
+                books: [
+                    {
+                        title: "특수 및 일반 상대성 이론",
+                        pubYear: "1916년",
+                        author: "알베르트 아인슈타인",
+                        birth: "1879년",
+                        death: "1955년",
+                        field: "과학·의학",
+                        summary: "빛의 속도가 일정하며 시간과 공간이 관찰자의 운동과 중력에 따라 휘어진다는 상대성 원리를 대중도 이해할 수 있도록 직접 풀어쓴 과학의 고전입니다."
+                    },
+                    {
+                        title: "물질과 기억",
+                        pubYear: "1896년",
+                        author: "앙리 베르그송",
+                        birth: "1859년",
+                        death: "1941년",
+                        field: "철학",
+                        summary: "물리학적·공간화된 시간과 대비되는 인간 내면의 질적 시간인 '순수 지속'을 탐구하며 20세기 시간 철학과 아인슈타인과의 시간 논쟁을 이끌었습니다."
+                    }
+                ]
+            },
+
+            // ---------------- 5. 현대 ----------------
+            {
+                id: "evt-041",
+                year: "1914년 ~ 1918년",
+                era: "현대",
+                title: "제1차 세계대전 발발과 참호전의 참극",
+                significance: "독가스, 탱크, 기관총 등 근대 과학기술이 대량 살상에 동원된 최초의 총력전으로, 수천만 명이 희생되고 유럽 문명의 이성과 진보에 대한 낙관론이 산산조각 났습니다.",
+                books: [
+                    {
+                        title: "서구의 몰락",
+                        pubYear: "1918년",
+                        author: "오스발트 슈펭글러",
+                        birth: "1880년",
+                        death: "1936년",
+                        field: "역사·인류",
+                        summary: "제1차 세계대전의 참혹함 속에서 서구 중심의 직선적 진보 사관을 거부하고, 모든 문명은 유기체처럼 탄생·성장·쇠퇴의 주기를 겪는다는 문명 순환론을 제시했습니다."
+                    },
+                    {
+                        title: "서부 전선 이상 없다",
+                        pubYear: "1929년",
+                        author: "에리히 마리아 레마르크",
+                        birth: "1898년",
+                        death: "1970년",
+                        field: "문학·비평",
+                        summary: "10대 나이에 참전한 독일 병사의 시선으로 참호전의 공포와 전쟁이 한 세대의 영혼을 어떻게 파괴했는지 고발한 반전 문학의 불후의 명작입니다."
+                    },
+                    {
+                        title: "논리-철학 논고",
+                        pubYear: "1921년",
+                        author: "루트비히 비트겐슈타인",
+                        birth: "1889년",
+                        death: "1951년",
+                        field: "철학",
+                        summary: "제1차 세계대전 참전 중 배낭에 원고를 넣고 다니며 완성한 책으로, '말할 수 없는 것에 대해서는 침묵해야 한다'는 명제로 20세기 언어철학의 혁명을 일으켰습니다."
+                    },
+                    {
+                        title: "쾌락 원칙을 넘어서",
+                        pubYear: "1920년",
+                        author: "지그문트 프로이트",
+                        birth: "1856년",
+                        death: "1939년",
+                        field: "심리·언어",
+                        summary: "1차 대전 참전 군인들의 전쟁 신경증(트라우마)과 반복 강박을 관찰하면서 인간 내면의 파괴적 본능인 '죽음 충동(타나토스)' 개념을 정립했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-042",
+                year: "1917년",
+                era: "현대",
+                title: "러시아 혁명과 소비에트 연방 수립",
+                significance: "제1차 세계대전의 피폐함 속에서 레닌과 볼셰비키가 차르 전제정을 타도하고 세계 최초의 사회주의 국가를 건설하면서 20세기 자본주의와 사회주의의 양대 이념 대립이 시작되었습니다.",
+                books: [
+                    {
+                        title: "세계사를 뒤흔든 열흘",
+                        pubYear: "1919년",
+                        author: "존 리드",
+                        birth: "1887년",
+                        death: "1920년",
+                        field: "역사·인류",
+                        summary: "미국인 저널리스트가 1917년 페트로그라드 10월 혁명의 현장을 직접 취재하여 볼셰비키 봉기의 긴박한 순간과 민중의 열기를 생생하게 기록한 르포르타주 고전입니다."
+                    },
+                    {
+                        title: "동물농장",
+                        pubYear: "1945년",
+                        author: "조지 오웰",
+                        birth: "1903년",
+                        death: "1950년",
+                        field: "문학·비평",
+                        summary: "러시아 혁명의 이상이 스탈린 전체주의 독재로 변질되는 과정을 농장 동물들의 반란과 배신에 빗대어 권력 부패의 메커니즘을 날카롭게 풍자한 우화입니다."
+                    },
+                    {
+                        title: "역사와 계급의식",
+                        pubYear: "1923년",
+                        author: "죄르지 루카치",
+                        birth: "1885년",
+                        death: "1971년",
+                        field: "철학",
+                        summary: "러시아 혁명 이후 자본주의 사회에서 인간이 상품화되고 소외되는 '물화(物化)' 현상을 분석하여 서구 마르크스주의 철학의 문을 열었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-043",
+                year: "1927년",
+                era: "현대",
+                title: "양자역학의 성립과 솔베이 회의",
+                significance: "보어, 하이젠베르크, 슈뢰딩거 등이 미시 세계의 불확정성과 파동-입자 이중성을 규명하면서 고전 물리학의 결정론적 세계관이 붕괴하고 현대 첨단 과학의 기초가 확립되었습니다.",
+                books: [
+                    {
+                        title: "부분과 전체",
+                        pubYear: "1969년",
+                        author: "베르너 하이젠베르크",
+                        birth: "1901년",
+                        death: "1976년",
+                        field: "과학·의학",
+                        summary: "불확정성 원리를 발견한 저자가 아인슈타인, 보어 등 당대 최고 물리학자들과 나눈 대화를 통해 양자역학 탄생의 철학적·인간적 고뇌를 기록한 명저입니다."
+                    },
+                    {
+                        title: "생명이란 무엇인가",
+                        pubYear: "1944년",
+                        author: "에르빈 슈뢰딩거",
+                        birth: "1887년",
+                        death: "1961년",
+                        field: "과학·의학",
+                        summary: "양자물리학의 관점에서 유전 정보가 '비주기적 결정'에 저장되어 있음을 예측하여 왓슨과 크릭이 DNA 이중나선 구조를 발견하는 결정적 영감을 주었습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-044",
+                year: "1929년",
+                era: "현대",
+                title: "미국 월스트리트 대폭락과 세계 대공황",
+                significance: "뉴욕 증시 붕괴로 촉발된 전 세계적 실업과 디플레이션으로 시장의 자동 조절 능력에 대한 맹신이 무너졌으며, 수정자본주의(뉴딜 정책)와 전체주의의 대두를 초래했습니다.",
+                books: [
+                    {
+                        title: "고용·이자 및 화폐의 일반이론",
+                        pubYear: "1936년",
+                        author: "존 메이너드 케인스",
+                        birth: "1883년",
+                        death: "1946년",
+                        field: "경제학",
+                        summary: "대공황의 대량 실업은 시장의 자유방임으로는 해결될 수 없으며, 정부의 적극적인 재정 지출과 유효수요 창출이 필요하다는 현대 거시경제학(케인스주의)을 창시했습니다."
+                    },
+                    {
+                        title: "분노의 포도",
+                        pubYear: "1939년",
+                        author: "존 스타인벡",
+                        birth: "1902년",
+                        death: "1968년",
+                        field: "문학·비평",
+                        summary: "대공황과 황진(더스트 볼)으로 농토를 잃고 캘리포니아로 이주하는 소작농 조드 일가의 비극과 인간적 연대를 그려낸 미국 리얼리즘 문학의 걸작입니다."
+                    },
+                    {
+                        title: "거대한 전환",
+                        pubYear: "1944년",
+                        author: "칼 폴라니",
+                        birth: "1886년",
+                        death: "1964년",
+                        field: "경제학",
+                        summary: "대공황과 파시즘의 비극을 분석하며, 노동·토지·화폐를 상품화한 '자기조정적 시장'이라는 유토피아적 실험이 인간 사회를 파괴하고 사회적 자기보호 운동을 불렀다고 통찰했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-045",
+                year: "1933년 ~ 1945년",
+                era: "현대",
+                title: "나치즘 집권과 제2차 세계대전·홀로코스트",
+                significance: "전체주의 광기와 인류 역사상 최대 규모의 전쟁, 아우슈비츠 홀로코스트는 계몽된 근대 이성이 어떻게 야만적 대량 학살의 도구로 전락할 수 있는지 깊은 철학적 성찰을 강요했습니다.",
+                books: [
+                    {
+                        title: "전체주의의 기원 & 예루살렘의 아이히만",
+                        pubYear: "1951~1963년",
+                        author: "한나 아렌트",
+                        birth: "1906년",
+                        death: "1975년",
+                        field: "정치·사회",
+                        summary: "나치즘과 스탈린주의라는 새로운 지배 체제를 해부하고, 전범 아이히만 재판을 통해 사유하지 않는 평범한 관료적 순응이 거대한 악을 낳는 '악의 평범성'을 규명했습니다."
+                    },
+                    {
+                        title: "계몽의 변증법",
+                        pubYear: "1944년",
+                        author: "막스 호르크하이머 & 테오도어 아도르노",
+                        birth: "1895년",
+                        death: "1973년",
+                        field: "철학",
+                        summary: "나치를 피해 미국으로 망명한 프랑크푸르트 학파 철학자들이 자연 지배를 추구한 도구적 이성이 어떻게 아우슈비츠의 야만으로 퇴행했는지 성찰한 비판이론 고전입니다."
+                    },
+                    {
+                        title: "죽음의 수용소에서",
+                        pubYear: "1946년",
+                        author: "빅터 프랭클",
+                        birth: "1905년",
+                        death: "1997년",
+                        field: "심리·언어",
+                        summary: "아우슈비츠 강제수용소에서 살아남은 정신의학자가 극한의 고통 속에서도 삶의 의미를 발견하는 인간만이 생존할 수 있다는 '로고테라피(의미치료)'를 창시했습니다."
+                    },
+                    {
+                        title: "노예의 길",
+                        pubYear: "1944년",
+                        author: "프리드리히 하이에크",
+                        birth: "1899년",
+                        death: "1992년",
+                        field: "경제학",
+                        summary: "전시 통제경제와 전체주의의 부상을 경고하며, 국가의 중앙계획경제는 결국 개인의 자유를 박탈하는 전체주의 독재로 이어진다고 비판한 신자유주의의 원전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-046",
+                year: "1945년",
+                era: "현대",
+                title: "히로시마·나가사키 원자폭탄 투하와 종전",
+                significance: "인류가 스스로 지구 문명을 절멸시킬 수 있는 핵무기를 손에 넣으면서, 과학기술의 윤리적 책임과 인류 생존에 대한 실존적 불안이 현대 지성사의 핵심 화두가 되었습니다.",
+                books: [
+                    {
+                        title: "존재와 무 & 실존주의는 휴머니즘이다",
+                        pubYear: "1943~1946년",
+                        author: "장폴 사르트르",
+                        birth: "1905년",
+                        death: "1980년",
+                        field: "철학",
+                        summary: "2차 대전의 폐허와 핵 시대의 불안 속에서 '실존은 본질에 앞선다'고 선언하며, 신이나 운명이 아닌 인간 스스로의 선택과 책임을 강조한 실존주의 고전입니다."
+                    },
+                    {
+                        title: "히로시마",
+                        pubYear: "1946년",
+                        author: "존 허시",
+                        birth: "1914년",
+                        death: "1993년",
+                        field: "역사·인류",
+                        summary: "원폭 투하 1년 뒤 히로시마 생존자 6명의 시선으로 핵폭발의 참상을 담담하면서도 충격적으로 기록하여 전 세계에 핵무기의 공포를 각인시킨 저널리즘 걸작입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-047",
+                year: "1947년 ~ 1960년",
+                era: "현대",
+                title: "제2차 세계대전 이후 탈식민지화와 제3세계 독립",
+                significance: "인도·파키스탄 독립을 시작으로 아시아와 아프리카의 식민지들이 해방되면서, 서구 중심주의와 식민지배가 피지배자의 내면과 문화에 남긴 상처를 해부하는 탈식민주의 사상이 태동했습니다.",
+                books: [
+                    {
+                        title: "대지의 저주받은 사람들",
+                        pubYear: "1961년",
+                        author: "프란츠 파농",
+                        birth: "1925년",
+                        death: "1961년",
+                        field: "정치·사회",
+                        summary: "알제리 독립전쟁에 참여한 정신과 의사가 식민주의의 폭력성과 피식민지인의 열등감 콤플렉스를 분석하고 진정한 해방의 길을 모색한 탈식민주의의 경전입니다."
+                    },
+                    {
+                        title: "오리엔탈리즘",
+                        pubYear: "1978년",
+                        author: "에드워드 사이드",
+                        birth: "1935년",
+                        death: "2003년",
+                        field: "문학·비평",
+                        summary: "서구가 제국주의 지배를 정당화하기 위해 동양을 비합리적이고 열등한 타자로 재현·구축해 온 지식과 권력의 담론 체계를 폭로한 현대 인문학의 기념비입니다."
+                    },
+                    {
+                        title: "슬픈 열대",
+                        pubYear: "1955년",
+                        author: "클로드 레비스트로스",
+                        birth: "1908년",
+                        death: "2009년",
+                        field: "역사·인류",
+                        summary: "브라질 원주민 사회 연구를 통해 '미개'와 '문명'의 우열을 부정하고 모든 인간 사회의 사고 구조가 보편적임을 입증한 구조주의 인류학의 걸작입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-048",
+                year: "1950년 ~ 1962년",
+                era: "현대",
+                title: "냉전 체제 심화와 매카시즘·쿠바 미사일 위기",
+                significance: "미국과 소련의 핵 군비 경쟁과 이념적 사상 검증(매카시즘), 그리고 핵전쟁 직전까지 갔던 쿠바 미사일 위기를 겪으며 권력의 감시와 자유의 위기를 성찰하는 저작들이 탄생했습니다.",
+                books: [
+                    {
+                        title: "1984",
+                        pubYear: "1949년",
+                        author: "조지 오웰",
+                        birth: "1903년",
+                        death: "1950년",
+                        field: "문학·비평",
+                        summary: "냉전 초기 빅브라더의 텔레스크린 감시와 '이중사고', 언어 통제(신어)를 통해 인간의 정신까지 지배하는 전체주의 디스토피아를 섬뜩하게 예견한 걸작입니다."
+                    },
+                    {
+                        title: "열린사회와 그 적들",
+                        pubYear: "1945년",
+                        author: "칼 포퍼",
+                        birth: "1902년",
+                        death: "1994년",
+                        field: "철학",
+                        summary: "플라톤·헤겔·마르크스로 이어지는 역사법칙주의가 전체주의의 지적 뿌리임을 비판하고, 비판적 이성과 점진적 개혁이 가능한 자유민주주의 '열린사회'를 옹호했습니다."
+                    },
+                    {
+                        title: "역사란 무엇인가",
+                        pubYear: "1961년",
+                        author: "E.H. 카",
+                        birth: "1892년",
+                        death: "1982년",
+                        field: "역사·인류",
+                        summary: "냉전기의 보수적 실증주의에 맞서 역사를 '현재와 과거 사이의 끊임없는 대화'로 정의하며 역사가의 관점과 진보에 대한 믿음을 설파한 역사학 고전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-049",
+                year: "1953년",
+                era: "현대",
+                title: "DNA 이중나선 구조 규명 (분자생물학 혁명)",
+                significance: "제임스 왓슨과 프랜시스 크릭이 유전 정보의 전달 메커니즘인 DNA 이중나선 구조를 밝혀내면서 생명 현상의 비밀이 풀리고 현대 유전공학·생명과학 시대가 열렸습니다.",
+                books: [
+                    {
+                        title: "이중나선",
+                        pubYear: "1968년",
+                        author: "제임스 왓슨",
+                        birth: "1928년",
+                        death: "2025년",
+                        field: "과학·의학",
+                        summary: "DNA 구조 규명 과정의 치열한 연구 경쟁과 과학자들의 인간적 야망, 로절린드 프랭클린의 X선 회절 사진 등 발견의 뒷이야기를 솔직하게 기록한 과학 회고록입니다."
+                    },
+                    {
+                        title: "이기적 유전자",
+                        pubYear: "1976년",
+                        author: "리처드 도킨스",
+                        birth: "1941년",
+                        death: "생존",
+                        field: "과학·의학",
+                        summary: "분자생물학의 성과를 바탕으로 진화의 주체를 개체나 종이 아닌 '유전자'로 재정의하고, 인간은 유전자의 생존 기계이며 문화 복제자인 '밈(Meme)'을 창안한 명저입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-050",
+                year: "1962년",
+                era: "현대",
+                title: "고도성장기의 환경 파괴와 현대 환경운동 태동",
+                significance: "전후 급속한 산업화와 합성화학물질(DDT) 남용으로 생태계 파괴가 가시화되면서, 인간의 자연 정복이 부메랑이 되어 돌아온다는 생태주의적 각성이 전 세계로 확산되었습니다.",
+                books: [
+                    {
+                        title: "침묵의 봄",
+                        pubYear: "1962년",
+                        author: "레이첼 카슨",
+                        birth: "1907년",
+                        death: "1964년",
+                        field: "과학·의학",
+                        summary: "무분별한 살충제 사용이 새들의 노래를 앗아가고 먹이사슬을 통해 인간까지 위협한다는 사실을 과학적 증거와 시적 문체로 고발해 현대 환경운동을 촉발한 기념비입니다."
+                    },
+                    {
+                        title: "성장의 한계",
+                        pubYear: "1972년",
+                        author: "도넬라 메도즈 외 (로마클럽)",
+                        birth: "1941년",
+                        death: "2001년",
+                        field: "경제학",
+                        summary: "인구 증가, 산업화, 자원 고갈, 환경 오염 추세가 계속된다면 100년 이내에 지구 성장의 한계에 도달할 것임을 컴퓨터 시뮬레이션으로 경고한 지속가능발전의 원전입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-051",
+                year: "1964년 ~ 1968년",
+                era: "현대",
+                title: "미국 민권법 제정과 1968년 혁명 (68운동)",
+                significance: "흑인 민권운동, 베트남 반전운동, 여성해방운동, 파리 5월 혁명이 전 세계를 뒤흔들면서 기존의 권위주의적 국가·가부장제·지식 권력을 해체하는 포스트모던 사상이 만개했습니다.",
+                books: [
+                    {
+                        title: "정의론 (A Theory of Justice)",
+                        pubYear: "1971년",
+                        author: "존 롤스",
+                        birth: "1921년",
+                        death: "2002년",
+                        field: "정치·사회",
+                        summary: "민권운동과 베트남전으로 분열된 미국 사회에 '무지의 베일'이라는 사고실험을 통해 공정으로서의 정의와 최소수혜자 우선 원칙(차등의 원칙)을 제시한 현대 정치철학의 고전입니다."
+                    },
+                    {
+                        title: "감시와 처벌",
+                        pubYear: "1975년",
+                        author: "미셸 푸코",
+                        birth: "1926년",
+                        death: "1984년",
+                        field: "철학",
+                        summary: "68혁명 이후 권력의 작동 방식을 탐구하며, 근대 사회가 신체적 처벌 대신 '파놉티콘(원형감옥)'의 시선과 규율을 통해 인간의 영혼을 내면에서 길들이는 과정을 해부했습니다."
+                    },
+                    {
+                        title: "제2의 성",
+                        pubYear: "1949년",
+                        author: "시몬 드 보부아르",
+                        birth: "1908년",
+                        death: "1986년",
+                        field: "철학",
+                        summary: "'여성은 태어나는 것이 아니라 만들어진다'는 명제로 60년대 제2물결 페미니즘의 이론적 토대를 제공하며 가부장제 문화 속 여성의 타자화를 철학적으로 규명했습니다."
+                    },
+                    {
+                        title: "동물 해방",
+                        pubYear: "1975년",
+                        author: "피터 싱어",
+                        birth: "1946년",
+                        death: "생존",
+                        field: "철학",
+                        summary: "인종차별·성차별 철폐 운동의 윤리적 논리를 인간 이외의 동물에게까지 확장하여, 고통을 느끼는 모든 존재를 동등하게 고려해야 한다는 '종차별주의' 비판을 정립했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-052",
+                year: "1969년",
+                era: "현대",
+                title: "아폴로 11호 달 착륙과 아파넷(인터넷 원형) 가동",
+                significance: "인류가 최초로 지구 밖 천체인 달에 발을 디디며 지구를 우주적 관점에서 조망하게 되었고, 동시에 컴퓨터 네트워크 통신이 시작되며 정보화 시대의 서막이 열렸습니다.",
+                books: [
+                    {
+                        title: "코스모스 (Cosmos)",
+                        pubYear: "1980년",
+                        author: "칼 세이건",
+                        birth: "1934년",
+                        death: "1996년",
+                        field: "과학·의학",
+                        summary: "아폴로 달 탐사와 보이저호 우주 탐사 시대의 성취를 바탕으로, 우주 진화의 장대한 서사 속에서 지구가 얼마나 소중하고 외로운 '창백한 푸른 점'인지 일깨운 과학 교양의 고전입니다."
+                    },
+                    {
+                        title: "과학혁명의 구조",
+                        pubYear: "1962년",
+                        author: "토머스 쿤",
+                        birth: "1922년",
+                        death: "1996년",
+                        field: "철학",
+                        summary: "거대 과학 시대에 과학의 발전이 지식의 점진적 축적이 아니라 기존 패러다임의 위기와 혁명적 전환('패러다임 시프트')을 통해 이루어진다는 과학철학의 혁명을 일으켰습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-053",
+                year: "1979년 ~ 1989년",
+                era: "현대",
+                title: "신자유주의 대두와 베를린 장벽 붕괴 (냉전 종식)",
+                significance: "영국 대처와 미국 레이건 정부의 신자유주의 개혁이 확산되고, 1989년 베를린 장벽 붕괴와 1991년 소련 해체로 45년 냉전이 종식되면서 자본주의 세계화가 가속화되었습니다.",
+                books: [
+                    {
+                        title: "역사의 종말과 최후의 인간",
+                        pubYear: "1992년",
+                        author: "프랜시스 후쿠야마",
+                        birth: "1952년",
+                        death: "생존",
+                        field: "정치·사회",
+                        summary: "베를린 장벽 붕괴와 공산권 몰락 직후, 서구식 자유민주주의와 시장경제가 인류 이념 진화의 최종 형태로서 승리했다는 선언으로 1990년대 세계 담론을 주도했습니다."
+                    },
+                    {
+                        title: "구별짓기",
+                        pubYear: "1979년",
+                        author: "피에르 부르디외",
+                        birth: "1930년",
+                        death: "2002년",
+                        field: "정치·사회",
+                        summary: "후기 자본주의 사회에서 계급 불평등이 경제적 자본뿐만 아니라 예술·취향·교육이라는 '문화자본'과 '아비투스'를 통해 어떻게 은밀히 재생산되는지 분석했습니다."
+                    },
+                    {
+                        title: "위험사회",
+                        pubYear: "1986년",
+                        author: "울리히 벡",
+                        birth: "1944년",
+                        death: "2015년",
+                        field: "정치·사회",
+                        summary: "1986년 체르노빌 원전 사고 직후 출간되어, 근대 산업화가 낳은 핵·환경·기술적 위험이 계급과 국경을 초월해 인류를 위협하는 '성찰적 근대화' 시대를 진단했습니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-054",
+                year: "1990년 ~ 2001년",
+                era: "현대",
+                title: "월드 와이드 웹(WWW) 대중화와 9·11 테러",
+                significance: "인터넷의 폭발적 확산으로 전 지구적 정보 네트워크 사회가 열렸으나, 2001년 9·11 테러는 탈냉전 낙관론을 깨뜨리고 문명 간 갈등과 국가 감시 체제를 심화시켰습니다.",
+                books: [
+                    {
+                        title: "문명의 충돌",
+                        pubYear: "1996년",
+                        author: "새뮤얼 헌팅턴",
+                        birth: "1927년",
+                        death: "2008년",
+                        field: "정치·사회",
+                        summary: "냉전 종식 이후 세계 분쟁의 주된 원인이 이념이나 경제가 아니라 서구·이슬람·중화 등 문화와 종교적 정체성의 충돌이 될 것이라 예측해 9·11 테러 이후 재조명되었습니다."
+                    },
+                    {
+                        title: "네트워크 사회의 도래",
+                        pubYear: "1996년",
+                        author: "마누엘 카스텔",
+                        birth: "1942년",
+                        death: "생존",
+                        field: "정치·사회",
+                        summary: "인터넷과 정보기술 혁명이 공간·시간·자본·권력의 구조를 '흐름의 공간'으로 재편하며 정보화 자본주의 시대를 열었음을 분석한 현대 사회학의 기념비입니다."
+                    }
+                ]
+            },
+            {
+                id: "evt-055",
+                year: "2008년 ~ 현재",
+                era: "현대",
+                title: "글로벌 금융위기와 AI·기후위기 시대",
+                significance: "2008년 리먼 브라더스 파산으로 신자유주의 금융화의 모순이 드러났고, 이후 스마트폰·생성형 AI 혁명과 기후위기·팬데믹이 겹치며 인류 문명의 지속가능성이 시험대에 올랐습니다.",
+                books: [
+                    {
+                        title: "21세기 자본",
+                        pubYear: "2013년",
+                        author: "토마 피케티",
+                        birth: "1971년",
+                        death: "생존",
+                        field: "경제학",
+                        summary: "2008년 금융위기 이후 심화된 불평등의 원인을 방대한 역사 데이터로 추적하여 '자본수익률(r)이 경제성장률(g)보다 크다(r > g)'는 공식을 통해 부의 세습 구조를 입증했습니다."
+                    },
+                    {
+                        title: "감시자본주의 시대",
+                        pubYear: "2019년",
+                        author: "쇼샤나 주보프",
+                        birth: "1951년",
+                        death: "생존",
+                        field: "경제학",
+                        summary: "거대 빅테크 기업들이 인간의 온라인 행동 데이터를 무료 원재료로 추출해 예측·조작하는 새로운 자본주의 형태를 날카롭게 비판한 디지털 시대의 필독서입니다."
+                    },
+                    {
+                        title: "호모 데우스 & 넥서스",
+                        pubYear: "2015~2024년",
+                        author: "유발 하라리",
+                        birth: "1976년",
+                        death: "생존",
+                        field: "역사·인류",
+                        summary: "생명공학과 인공지능(AI)이 결합하여 인간이 신의 영역에 도전하는 미래와, 비인간 지능 네트워크가 인류 민주주의에 던지는 실존적 질문을 탐구합니다."
+                    },
+                    {
+                        title: "피로사회",
+                        pubYear: "2010년",
+                        author: "한병철",
+                        birth: "1959년",
+                        death: "생존",
+                        field: "철학",
+                        summary: "디지털 초연결 시대 현대인이 외부의 억압이 아닌 스스로를 착취하는 '성과주체'가 되어 우울증과 번아웃에 시달리는 신자유주의 정신병리를 진단한 철학 에세이입니다."
+                    }
+                ]
+            }
+        ];
+
+        // ============================================================================
+        // 상태 관리 및 로컬 스토리지 연동
+        // ============================================================================
+        const STORAGE_KEY = 'world_history_books_archive_v1';
+        let archiveData = [];
+        let selectedEventId = null;
+        let currentView = 'events'; // 'events' or 'books'
+        let currentEraFilter = 'ALL';
+        let currentFieldFilter = 'ALL';
+        let searchQuery = '';
+
+        // 초기화
+        function initApp() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    archiveData = JSON.parse(saved);
+                } catch (e) {
+                    archiveData = [...INITIAL_HISTORY_DATA];
+                }
+            } else {
+                archiveData = [...INITIAL_HISTORY_DATA];
+            }
+
+            // 다크모드 초기화
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
+            }
+
+            // 첫 번째 사건 기본 선택
+            if (archiveData.length > 0) {
+                selectedEventId = archiveData[0].id;
+            }
+
+            updateCounters();
+            renderAll();
+            lucide.createIcons();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(archiveData));
+            updateCounters();
+        }
+
+        function updateCounters() {
+            const totalEvents = archiveData.length;
+            const totalBooks = archiveData.reduce((acc, ev) => acc + (ev.books ? ev.books.length : 0), 0);
+            document.getElementById('badge-event-count').textContent = totalEvents;
+            document.getElementById('badge-book-count').textContent = totalBooks;
+        }
+
+        // 다크/라이트 모드 토글
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                icon.setAttribute('data-lucide', 'moon');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                icon.setAttribute('data-lucide', 'sun');
+            }
+            lucide.createIcons();
+        }
+
+        // 뷰 전환 ('events' vs 'books')
+        function switchView(viewName) {
+            currentView = viewName;
+            const tabEvents = document.getElementById('tab-events');
+            const tabBooks = document.getElementById('tab-books');
+            const viewEvents = document.getElementById('view-events');
+            const viewBooks = document.getElementById('view-books');
+
+            if (viewName === 'events') {
+                tabEvents.className = "flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-slate-700 text-archive-navy dark:text-amber-300 shadow-sm";
+                tabBooks.className = "flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-archive-muted dark:text-slate-400 hover:text-archive-ink dark:hover:text-white";
+                viewEvents.classList.remove('hidden');
+                viewBooks.classList.add('hidden');
+            } else {
+                tabBooks.className = "flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white dark:bg-slate-700 text-archive-navy dark:text-amber-300 shadow-sm";
+                tabEvents.className = "flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-archive-muted dark:text-slate-400 hover:text-archive-ink dark:hover:text-white";
+                viewBooks.classList.remove('hidden');
+                viewEvents.classList.add('hidden');
+            }
+            renderAll();
+        }
+
+        // 필터링 로직
+        function getFilteredEvents() {
+            const q = searchQuery.trim().toLowerCase();
+            return archiveData.filter(ev => {
+                // 시대 필터
+                if (currentEraFilter !== 'ALL' && ev.era !== currentEraFilter) return false;
+
+                // 분야 필터 (해당 사건의 연관 도서 중 하나라도 선택된 분야를 가지면 포함)
+                if (currentFieldFilter !== 'ALL') {
+                    const hasField = ev.books.some(b => b.field === currentFieldFilter);
+                    if (!hasField) return false;
+                }
+
+                // 검색어 필터
+                if (q) {
+                    const inEvent = ev.title.toLowerCase().includes(q) ||
+                                    ev.year.toLowerCase().includes(q) ||
+                                    ev.significance.toLowerCase().includes(q);
+                    const inBooks = ev.books.some(b =>
+                        b.title.toLowerCase().includes(q) ||
+                        b.author.toLowerCase().includes(q) ||
+                        b.summary.toLowerCase().includes(q) ||
+                        b.field.toLowerCase().includes(q)
+                    );
+                    if (!inEvent && !inBooks) return false;
+                }
+
+                return true;
+            });
+        }
+
+        function setEraFilter(era) {
+            currentEraFilter = era;
+            document.querySelectorAll('.era-btn').forEach(btn => {
+                if (btn.getAttribute('data-era') === era) {
+                    btn.className = "era-btn active px-3 py-1.5 rounded-lg text-xs font-semibold bg-archive-gold text-white shadow-sm transition-all whitespace-nowrap";
+                } else {
+                    btn.className = "era-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 text-archive-muted dark:text-slate-300 border border-archive-border dark:border-slate-700 hover:border-archive-gold transition-all whitespace-nowrap";
+                }
+            });
+            renderAll();
+        }
+
+        function handleFieldFilter() {
+            currentFieldFilter = document.getElementById('field-filter').value;
+            renderAll();
+        }
+
+        function handleSearch() {
+            const input = document.getElementById('search-input');
+            searchQuery = input.value;
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (searchQuery.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            renderAll();
+        }
+
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            searchQuery = '';
+            document.getElementById('clear-search-btn').classList.add('hidden');
+            renderAll();
+        }
+
+        // 분야별 뱃지 색상 반환
+        function getFieldBadgeStyle(field) {
+            const map = {
+                '철학': 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800',
+                '정치·사회': 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800',
+                '역사·인류': 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800',
+                '과학·의학': 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800',
+                '경제학': 'bg-cyan-50 text-cyan-800 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800',
+                '문학·비평': 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800',
+                '심리·언어': 'bg-orange-50 text-orange-800 border-orange-200 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-800'
+            };
+            return map[field] || 'bg-stone-100 text-stone-700 border-stone-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700';
+        }
+
+        // 전체 렌더링 조율
+        function renderAll() {
+            const filteredEvents = getFilteredEvents();
+            renderEventList(filteredEvents);
+
+            // 현재 선택된 사건이 필터 결과에 없으면 첫 번째 항목으로 자동 보정
+            if (filteredEvents.length > 0 && !filteredEvents.some(e => e.id === selectedEventId)) {
+                selectedEventId = filteredEvents[0].id;
+            }
+            renderDetailPanel(filteredEvents.find(e => e.id === selectedEventId));
+            renderBooksLibrary(filteredEvents);
+            lucide.createIcons();
+        }
+
+        // 좌측 사건 타임라인 리스트 렌더링
+        function renderEventList(events) {
+            const container = document.getElementById('event-list-container');
+            document.getElementById('filtered-event-status').textContent = `검색 결과 ${events.length}건`;
+
+            if (events.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 px-4 text-center">
+                        <i data-lucide="search-x" class="w-10 h-10 text-stone-300 dark:text-slate-600 mx-auto mb-2"></i>
+                        <p class="text-sm font-semibold text-archive-muted dark:text-slate-400">일치하는 역사적 사건이나 저서가 없습니다.</p>
+                        <button onclick="clearSearch(); setEraFilter('ALL');" class="mt-3 text-xs text-archive-gold dark:text-amber-400 underline">필터 초기화하기</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = events.map(ev => {
+                const isSelected = ev.id === selectedEventId;
+                const bookCount = ev.books.length;
+                return `
+                    <div onclick="selectEvent('${ev.id}')" 
+                        class="group relative pl-8 pr-3.5 py-3 rounded-xl cursor-pointer transition-all border ${
+                            isSelected 
+                            ? 'bg-archive-goldLight/70 dark:bg-amber-950/40 border-archive-gold dark:border-amber-500/70 shadow-xs' 
+                            : 'bg-white dark:bg-slate-900/60 border-transparent hover:bg-stone-50 dark:hover:bg-slate-800/70 hover:border-archive-border dark:hover:border-slate-700'
+                        }">
+                        <!-- 타임라인 점 -->
+                        <span class="absolute left-[0.8rem] top-4 w-3 h-3 rounded-full border-2 transition-transform ${
+                            isSelected 
+                            ? 'bg-archive-gold dark:bg-amber-400 border-white dark:border-slate-900 scale-125' 
+                            : 'bg-stone-300 dark:bg-slate-600 border-white dark:border-slate-900 group-hover:bg-archive-gold'
+                        }"></span>
+
+                        <div class="flex items-center justify-between gap-2 mb-1">
+                            <span class="text-xs font-bold tracking-tight ${isSelected ? 'text-archive-gold dark:text-amber-400' : 'text-archive-navy dark:text-slate-300'}">
+                                ${ev.year}
+                            </span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[11px] px-2 py-0.5 rounded-md bg-stone-100 dark:bg-slate-800 text-archive-muted dark:text-slate-400 font-medium">
+                                    ${ev.era}
+                                </span>
+                                <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-archive-navy/10 dark:bg-amber-500/15 text-archive-navy dark:text-amber-300 font-semibold">
+                                    <i data-lucide="book" class="w-3 h-3"></i> ${bookCount}권
+                                </span>
+                            </div>
+                        </div>
+
+                        <h3 class="serif-title text-sm sm:text-[15px] font-bold leading-snug ${isSelected ? 'text-archive-ink dark:text-white' : 'text-archive-ink/90 dark:text-slate-200'}">
+                            ${ev.title}
+                        </h3>
+
+                        <p class="text-xs text-archive-muted dark:text-slate-400 line-clamp-1 mt-1">
+                            대표 저서: ${ev.books.map(b => `《${b.title}》`).join(', ')}
+                        </p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 사건 클릭 핸들러
+        function selectEvent(eventId) {
+            selectedEventId = eventId;
+            const filteredEvents = getFilteredEvents();
+            renderEventList(filteredEvents);
+            const targetEvent = archiveData.find(e => e.id === eventId);
+            renderDetailPanel(targetEvent);
+            lucide.createIcons();
+
+            // 모바일 화면(1024px 미만)일 경우 모달 오픈
+            if (window.innerWidth < 1024) {
+                document.getElementById('mobile-detail-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeMobileModal() {
+            document.getElementById('mobile-detail-modal').classList.add('hidden');
+        }
+
+        // 우측 상세 패널 및 모바일 모달 내용 렌더링
+        function renderDetailPanel(ev) {
+            const desktopContainer = document.getElementById('detail-content-desktop');
+            const mobileContainer = document.getElementById('detail-content-mobile');
+
+            if (!ev) {
+                const emptyHTML = `
+                    <div class="h-96 flex flex-col items-center justify-center text-center text-archive-muted dark:text-slate-400">
+                        <i data-lucide="compass" class="w-12 h-12 mb-3 text-stone-300 dark:text-slate-600"></i>
+                        <p class="text-base font-semibold">좌측 연표에서 역사적 사건을 선택해 주세요.</p>
+                    </div>
+                `;
+                desktopContainer.innerHTML = emptyHTML;
+                mobileContainer.innerHTML = emptyHTML;
+                return;
+            }
+
+            // 현재 분야 필터가 적용되어 있다면 관련 책 강조 표시
+            const html = `
+                <div class="animate-fade-in">
+                    <!-- 상단 사건 메타 뱃지 -->
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-archive-navy text-white dark:bg-amber-600 shadow-xs">
+                            ${ev.year}
+                        </span>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-archive-goldLight text-archive-gold dark:bg-slate-800 dark:text-amber-300 border border-archive-gold/20">
+                            ${ev.era} 시대
+                        </span>
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-600 dark:bg-slate-800 dark:text-slate-400">
+                            연관 명저 ${ev.books.length}권
+                        </span>
+                    </div>
+
+                    <!-- 사건 제목 -->
+                    <h2 class="serif-title text-xl sm:text-2xl lg:text-[26px] font-bold text-archive-navy dark:text-white leading-tight mb-4">
+                        ${ev.title}
+                    </h2>
+
+                    <!-- 사건 개요 및 역사적 의의 박스 -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-stone-50 dark:bg-slate-800/80 border border-archive-border dark:border-slate-700/80 mb-7">
+                        <div class="flex items-center gap-1.5 text-xs font-bold text-archive-gold dark:text-amber-400 uppercase tracking-wider mb-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            <span>사건 개요 및 세계사적 의의</span>
+                        </div>
+                        <p class="text-sm sm:text-[15px] text-archive-ink dark:text-slate-200 leading-relaxed">
+                            ${ev.significance}
+                        </p>
+                    </div>
+
+                    <!-- 연관 저서 섹션 헤더 -->
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-archive-border dark:border-slate-800">
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-lg bg-archive-goldLight dark:bg-amber-950/60 text-archive-gold dark:text-amber-400 flex items-center justify-center">
+                                <i data-lucide="book-open" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="serif-title text-base sm:text-lg font-bold text-archive-navy dark:text-amber-300">
+                                이 사건 이후 영향을 받아 탄생한 위대한 저서
+                            </h3>
+                        </div>
+                    </div>
+
+                    <!-- 연관 저서 카드 리스트 -->
+                    <div class="space-y-4">
+                        ${ev.books.map((book, idx) => {
+                            const isHighlighted = currentFieldFilter !== 'ALL' && book.field === currentFieldFilter;
+                            return `
+                                <article class="p-5 rounded-2xl border transition-all ${
+                                    isHighlighted 
+                                    ? 'bg-amber-50/40 dark:bg-amber-950/20 border-archive-gold dark:border-amber-500 ring-1 ring-archive-gold/30' 
+                                    : 'bg-white dark:bg-slate-800/40 border-archive-border dark:border-slate-700/80 hover:border-archive-gold/60'
+                                } shadow-xs">
+                                    <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
+                                        <div>
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                <span class="text-xs font-bold text-archive-gold dark:text-amber-400">#${idx + 1}</span>
+                                                <h4 class="serif-title text-base sm:text-lg font-bold text-archive-ink dark:text-white">
+                                                    《${book.title}》
+                                                </h4>
+                                                ${book.pubYear ? `<span class="text-xs text-archive-muted dark:text-slate-400 font-medium">(${book.pubYear})</span>` : ''}
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold border ${getFieldBadgeStyle(book.field)}">
+                                            ${book.field}
+                                        </span>
+                                    </div>
+
+                                    <!-- 저자 정보 바 -->
+                                    <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-slate-900/70 border border-stone-200/70 dark:border-slate-700/60 mb-3.5 text-xs sm:text-sm">
+                                        <div class="flex items-center gap-1.5 font-bold text-archive-navy dark:text-slate-100">
+                                            <i data-lucide="user-check" class="w-4 h-4 text-archive-gold dark:text-amber-400"></i>
+                                            <span>저자: ${book.author}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-archive-muted dark:text-slate-400">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                            <span>생몰연도: <strong class="font-semibold text-archive-ink dark:text-slate-300">${book.birth} ~ ${book.death}</strong></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 사건과의 연관성 및 핵심 내용 -->
+                                    <div class="text-sm text-archive-ink/90 dark:text-slate-300 leading-relaxed">
+                                        <span class="inline-block font-semibold text-archive-navy dark:text-amber-300 mr-1">
+                                            [사건과의 연계 및 주요 내용]
+                                        </span>
+                                        ${book.summary}
+                                    </div>
+                                </article>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+            desktopContainer.innerHTML = html;
+            mobileContainer.innerHTML = html;
+        }
+
+        // 뷰 2: 고전/저자 도서관 역방향 탐색 그리드 렌더링
+        function renderBooksLibrary(filteredEvents) {
+            const container = document.getElementById('books-grid-container');
+            const q = searchQuery.trim().toLowerCase();
+
+            // 필터된 사건들로부터 모든 책 추출 (분야 필터와 검색어 정밀 반영)
+            const allBooks = [];
+            filteredEvents.forEach(ev => {
+                ev.books.forEach(book => {
+                    if (currentFieldFilter !== 'ALL' && book.field !== currentFieldFilter) return;
+                    if (q) {
+                        const matchBook = book.title.toLowerCase().includes(q) ||
+                                          book.author.toLowerCase().includes(q) ||
+                                          book.summary.toLowerCase().includes(q) ||
+                                          ev.title.toLowerCase().includes(q) ||
+                                          ev.year.toLowerCase().includes(q);
+                        if (!matchBook) return;
+                    }
+                    allBooks.push({
+                        ...book,
+                        eventId: ev.id,
+                        eventTitle: ev.title,
+                        eventYear: ev.year,
+                        eventEra: ev.era
+                    });
+                });
+            });
+
+            document.getElementById('filtered-book-status').textContent = allBooks.length;
+
+            if (allBooks.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-16 text-center bg-white dark:bg-slate-900 rounded-2xl border border-archive-border dark:border-slate-800">
+                        <i data-lucide="book-x" class="w-12 h-12 text-stone-300 dark:text-slate-600 mx-auto mb-3"></i>
+                        <p class="text-sm font-semibold text-archive-muted dark:text-slate-400">조건에 맞는 고전이나 저자가 없습니다.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = allBooks.map(item => `
+                <div onclick="jumpToEventFromBook('${item.eventId}')" 
+                    class="group bg-white dark:bg-slate-900 rounded-2xl p-5 border border-archive-border dark:border-slate-800 hover:border-archive-gold dark:hover:border-amber-500 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2.5">
+                            <span class="px-2.5 py-0.5 rounded-lg text-xs font-semibold border ${getFieldBadgeStyle(item.field)}">
+                                ${item.field}
+                            </span>
+                            <span class="text-xs text-archive-muted dark:text-slate-400 font-medium">
+                                ${item.pubYear || item.eventEra}
+                            </span>
+                        </div>
+
+                        <h3 class="serif-title text-lg font-bold text-archive-navy dark:text-white group-hover:text-archive-gold dark:group-hover:text-amber-400 transition-colors mb-1">
+                            《${item.title}》
+                        </h3>
+
+                        <p class="text-xs font-semibold text-archive-ink dark:text-slate-300 mb-3">
+                            ${item.author} <span class="font-normal text-archive-muted dark:text-slate-400">(${item.birth} ~ ${item.death})</span>
+                        </p>
+
+                        <p class="text-xs sm:text-sm text-archive-muted dark:text-slate-400 line-clamp-3 leading-relaxed mb-4">
+                            ${item.summary}
+                        </p>
+                    </div>
+
+                    <!-- 연결된 역사적 사건 푸터 -->
+                    <div class="pt-3 border-t border-stone-100 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                        <div class="flex items-center gap-1.5 text-archive-gold dark:text-amber-400 font-semibold truncate">
+                            <i data-lucide="landmark" class="w-3.5 h-3.5 shrink-0"></i>
+                            <span class="truncate">${item.eventYear} · ${item.eventTitle}</span>
+                        </div>
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-stone-400 group-hover:text-archive-gold shrink-0"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 도서관 뷰에서 책 클릭 시 해당 사건 뷰로 점프
+        function jumpToEventFromBook(eventId) {
+            selectedEventId = eventId;
+            switchView('events');
+            if (window.innerWidth < 1024) {
+                document.getElementById('mobile-detail-modal').classList.remove('hidden');
+            }
+        }
+
+        // ============================================================================
+        // 사용자 정의 사건/저서 추가 모달 제어
+        // ============================================================================
+        function openAddModal() {
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+            document.getElementById('add-entry-form').reset();
+        }
+
+        function handleAddSubmit(e) {
+            e.preventDefault();
+            const era = document.getElementById('new-era').value;
+            const year = document.getElementById('new-year').value.trim();
+            const title = document.getElementById('new-event-title').value.trim();
+            const significance = document.getElementById('new-event-desc').value.trim();
+
+            const bookTitle = document.getElementById('new-book-title').value.trim();
+            const bookField = document.getElementById('new-book-field').value;
+            const authorName = document.getElementById('new-author-name').value.trim();
+            const authorBirth = document.getElementById('new-author-birth').value.trim();
+            const authorDeath = document.getElementById('new-author-death').value.trim();
+            const bookSummary = document.getElementById('new-book-summary').value.trim();
+
+            const newBookObj = {
+                title: bookTitle,
+                pubYear: "",
+                author: authorName,
+                birth: authorBirth,
+                death: authorDeath,
+                field: bookField,
+                summary: bookSummary
+            };
+
+            // 동일한 이름의 사건이 이미 있으면 해당 사건에 책만 추가
+            const existingEvent = archiveData.find(ev => ev.title === title);
+            if (existingEvent) {
+                existingEvent.books.push(newBookObj);
+                selectedEventId = existingEvent.id;
+            } else {
+                const newId = 'evt-custom-' + Date.now();
+                archiveData.unshift({
+                    id: newId,
+                    year,
+                    era,
+                    title,
+                    significance,
+                    books: [newBookObj]
+                });
+                selectedEventId = newId;
+            }
+
+            saveToStorage();
+            closeAddModal();
+            switchView('events');
+            showToast(`'${title}' 및 《${bookTitle}》 항목이 아카이브에 등록되었습니다.`);
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-message').textContent = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+            setTimeout(() => {
+                box.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => box.classList.add('hidden'), 300);
+            }, 3200);
+        }
+
+        // 페이지 로드 시 실행
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
