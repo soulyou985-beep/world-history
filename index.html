@@ -118,6 +118,11 @@
                 </button>
             </div>
 
+            <a href="reader.html" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-archive-navy text-white dark:bg-amber-500 dark:text-slate-900 hover:opacity-90 transition-opacity border border-transparent">
+                <i data-lucide="book-open-text" class="w-4 h-4"></i>
+                <span>명저 135 깊이 읽기</span>
+            </a>
+
             <!-- 우측 유틸리티 버튼 -->
             <div class="flex items-center gap-2">
                 <button onclick="openAddModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-archive-navy hover:bg-slate-800 dark:bg-amber-600 dark:hover:bg-amber-500 text-white text-xs sm:text-sm font-medium transition-all shadow-sm">
@@ -342,6 +347,14 @@
         // 세계사 주요 사건 & 지성사 명저 방대한 데이터베이스 (고대 ~ 현대 110+ 핵심 사건)
         // 각 사건에는 사건 이후 영향을 받아 집필되거나 사상적 전환을 이룬 저서, 저자 생몰연도, 분야, 상세 분석 포함
         // ============================================================================
+
+        // ===== 명저 깊이 읽기(요약) 연결 =====
+        const SUMMARY_IDS = {"인간불평등기원론": "001", "총균쇠": "002", "사피엔스": "003", "길가메시서사시": "004", "역사는수메르에서시작되었다": "005", "법의정신": "006", "고대법": "007", "일리아스오디세이아": "008", "호모루덴스": "009", "논어": "010", "도덕경": "011", "손자병법": "012", "역사historiai": "013", "페르시아인들": "014", "펠로폰네소스전쟁사": "015", "국가politeia": "016", "소크라테스의변명": "017", "기하학원론": "018", "니코마코스윤리학": "019", "메노이케우스에게보내는편지": "020", "한비자": "021", "사기史記": "022", "의무론deofficiis": "023", "아이네이스": "024", "플루타르코스영웅전": "025", "명상록": "026", "알마게스트": "027", "고백록": "028", "신국론decivitatedei": "029", "철학의위안": "030", "로마제국쇠망사": "031", "로마법대전코르푸스유리스키빌리스": "032", "복원과대비에의한계산알자브르": "033", "의학정전alqanunfialtibb": "034", "광학의서": "035", "신학대전summatheologiae": "036", "알렉시아드": "037", "동방견문록": "038", "리흘라여행기": "039", "통치론제2논고": "040", "데카메론": "041", "역사서설무캇디마": "042", "신곡": "043", "이탈리아르네상스의문화": "044", "구텐베르크은하계": "045", "우신예찬": "046", "유토피아": "047", "수상록essais": "048", "인디아스제국의파괴에관한간략한보고": "049", "군주론": "050", "그리스도인의자유": "051", "기독교강요": "052", "프로테스탄트윤리와자본주의정신": "053", "천구의회전에관하여": "054", "인체의구조에관하여": "055", "두우주체계에관한대화": "056", "전쟁과평화의법": "057", "방법서설": "058", "리바이어던": "059", "아레오파지티카": "060", "자연철학의수학적원리프린키피아": "061", "통치론인간지성론": "062", "백과전서encyclopédie": "063", "사회계약론": "064", "관용론": "065", "국부론": "066", "인구론": "067", "영국노동자계급의상태": "068", "상식commonsense": "069", "페더럴리스트페이퍼연방주의자논집": "070", "미국의민주주의": "071", "프랑스혁명에관한성찰": "072", "인간의권리": "073", "여성의권리옹호": "074", "실천이성비판영구평화론": "075", "정신현상학": "076", "전쟁론vomkriege": "077", "전쟁과평화": "078", "해국도지": "079", "공산당선언": "080", "자유론onliberty": "081", "자본론daskapital": "082", "학문의권장문명론의개략": "083", "국화와칼": "084", "종의기원": "085", "차라투스트라는이렇게말했다": "086", "톰아저씨의오두막": "087", "흑인의영혼": "088", "어둠의심연": "089", "제국주의론": "090", "특수및일반상대성이론": "091", "물질과기억": "092", "서구의몰락": "093", "서부전선이상없다": "094", "논리철학논고": "095", "쾌락원칙을넘어서": "096", "세계사를뒤흔든열흘": "097", "동물농장": "098", "역사와계급의식": "099", "부분과전체": "100", "생명이란무엇인가": "101", "고용이자및화폐의일반이론": "102", "분노의포도": "103", "거대한전환": "104", "전체주의의기원예루살렘의아이히만": "105", "계몽의변증법": "106", "죽음의수용소에서": "107", "노예의길": "108", "존재와무실존주의는휴머니즘이다": "109", "히로시마": "110", "대지의저주받은사람들": "111", "오리엔탈리즘": "112", "슬픈열대": "113", "1984": "114", "열린사회와그적들": "115", "역사란무엇인가": "116", "이중나선": "117", "이기적유전자": "118", "침묵의봄": "119", "성장의한계": "120", "정의론atheoryofjustice": "121", "감시와처벌": "122", "제2의성": "123", "동물해방": "124", "코스모스cosmos": "125", "과학혁명의구조": "126", "역사의종말과최후의인간": "127", "구별짓기": "128", "위험사회": "129", "문명의충돌": "130", "네트워크사회의도래": "131", "21세기자본": "132", "감시자본주의시대": "133", "호모데우스넥서스": "134", "피로사회": "135"};
+        function summaryId(title){ return SUMMARY_IDS[String(title||'').replace(/[\s《》「」『』()（）&·,.\-:]/g,'').toLowerCase()] || null; }
+        function summaryLinkHTML(title, compact){
+            const id = summaryId(title); if(!id) return '';
+            return `<a href="reader.html#book-${id}" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 ${compact?'px-2.5 py-1 text-xs':'px-3 py-1.5 text-xs sm:text-sm'} rounded-lg font-semibold bg-archive-navy text-white dark:bg-amber-500 dark:text-slate-900 hover:opacity-90 transition-opacity"><i data-lucide="book-open-text" class="w-3.5 h-3.5"></i>요약 깊이 읽기</a>`;
+        }
         const INITIAL_HISTORY_DATA = [
             // ---------------- 1. 고대 ----------------
             {
@@ -2407,6 +2420,7 @@
                                                 </h4>
                                                 ${book.pubYear ? `<span class="text-xs text-archive-muted dark:text-slate-400 font-medium">(${book.pubYear})</span>` : ''}
                                             </div>
+                                            <div class="mt-2">${summaryLinkHTML(book.title)}</div>
                                         </div>
                                         <span class="px-2.5 py-1 rounded-lg text-xs font-semibold border ${getFieldBadgeStyle(book.field)}">
                                             ${book.field}
@@ -2509,6 +2523,7 @@
                         </p>
                     </div>
 
+                    <div class="mb-3">${summaryLinkHTML(item.title, true)}</div>
                     <!-- 연결된 역사적 사건 푸터 -->
                     <div class="pt-3 border-t border-stone-100 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
                         <div class="flex items-center gap-1.5 text-archive-gold dark:text-amber-400 font-semibold truncate">
